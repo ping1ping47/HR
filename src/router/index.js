@@ -14,8 +14,8 @@ const router = createRouter({
       component: () => import('../components/Exam/Exam.vue')
     },
     {
-      path: '/rmam',
-      component: () => import('../components/Rmam/Rmam.vue')
+      path: '/Post',
+      component: () => import('../components/Post/Post.vue')
     },
     {
       path: '/test',

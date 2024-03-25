@@ -87,7 +87,7 @@
               </li>
               <li>
                 <a
-                  href="rmam"
+                  href="Post"
                   class="flex cursor-pointer py-3 aside-menu-item dark:text-slate-300 dark:hover:text-white"
                   ><span
                     class="inline-flex justify-center items-center w-16 h-6 flex-none"

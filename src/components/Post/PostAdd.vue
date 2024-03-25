@@ -2,7 +2,7 @@
   <div class="popup-overlay flex justify-center items-center">
     <div class="popup-content justify-center bg-gray-900 p-8 rounded-lg mt-10">
       <div>
-        <form @submit.prevent="addExam" class="p-0 md:p-5">
+        <form @submit.prevent="addPost" class="p-0 md:p-5">
           <!-- Modal header -->
           <div
             class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
@@ -19,104 +19,34 @@
           <div class="grid gap-6 mb-6 md:grid-cols-4">
             <div class="col-span-2">
               <label
-                for="exam_id"
+                for="text"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >exam_id</label
+                >image</label
               >
               <input
-                v-model="formData.exam_id"
-                type="text"
-                name="exam_id"
-                id="exam_id"
+                v-model="formData.image"
+                type="imge"
+                name="image"
+                id="image"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
-                @input="validateNumber"
               />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                for="extype_id"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >extype_id</label
-              >
-              <input
-                v-model="formData.extype_id"
-                type="text"
-                name="extype_id"
-                id="extype_id"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-                @input="validateNumber"
-              />
-            </div>
-
-            <div class="flex">
-              <div class="col-span-2 flex-grow mb-4 mr-6">
-                <label
-                  for="question_1"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >Question 1</label
-                >
-                <textarea
-                  v-model="formData.question_1"
-                  type="text"
-                  name="question_1"
-                  id="question_1"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Type question 1"
-                  required=""
-                ></textarea>
-              </div>
-
-              <div class="col-span-2 flex-grow mb-4 mr-6">
-                <label
-                  for="question_2"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >Question 2</label
-                >
-                <textarea
-                  v-model="formData.question_2"
-                  type="text"
-                  name="question_2"
-                  id="question_2"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Type question 1"
-                ></textarea>
-              </div>
-
-              <div class="col-span-2 flex-grow mb-4">
-                <label
-                  for="question_3"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >Question 3</label
-                >
-                <textarea
-                  v-model="formData.question_3"
-                  type="text"
-                  name="question_3"
-                  id="question_3"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Type question 1"
-                ></textarea>
-              </div>
             </div>
           </div>
 
           <div class="grid gap-6 mb-6 md:grid-cols-4">
             <div class="col-span-2">
               <label
-                for="c1"
+                for="Company"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >c1</label
+                >Company</label
               >
               <input
-                v-model="formData.c1"
+                v-model="formData.Company"
                 type="text"
-                name="c1"
-                id="c1"
+                name="Company"
+                id="Company"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
@@ -125,15 +55,15 @@
 
             <div class="col-span-2">
               <label
-                for="c1_point"
+                for="Header"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >c1_point</label
+                >Header</label
               >
               <input
-                v-model="formData.c1_point"
+                v-model="formData.Header"
                 type="text"
-                name="c1_point"
-                id="c1_point"
+                name="Header"
+                id="Header"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
@@ -142,15 +72,15 @@
 
             <div class="col-span-2">
               <label
-                for="c2"
+                for="Description"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >c2</label
+                >Description</label
               >
               <input
-                v-model="formData.c2"
+                v-model="formData.Description"
                 type="text"
-                name="c2"
-                id="c2"
+                name="Description"
+                id="Description"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
@@ -159,15 +89,15 @@
 
             <div class="col-span-2">
               <label
-                for="c2_point"
+                for="department"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >c2_point</label
+                >department</label
               >
               <input
-                v-model="formData.c2_point"
+                v-model="formData.department"
                 type="text"
-                name="c2_point"
-                id="c2_point"
+                name="department"
+                id="department"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
@@ -176,15 +106,33 @@
 
             <div class="col-span-2">
               <label
-                for="c3"
+                for="salary"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >c3</label
+                >salary</label
               >
               <input
-                v-model="formData.c3"
+                v-model="formData.salary"
                 type="text"
-                name="c3"
-                id="c3"
+                name="salary"
+                id="salary"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Type product name"
+                required=""
+                @input="validateNumber"
+              />
+            </div>
+
+            <div class="col-span-2">
+              <label
+                for="sex"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >sex</label
+              >
+              <input
+                v-model="formData.sex"
+                type="text"
+                name="sex"
+                id="sex"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
@@ -193,15 +141,15 @@
 
             <div class="col-span-2">
               <label
-                for="c3_point"
+                for="views"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >c3_point</label
+                >views</label
               >
               <input
-                v-model="formData.c3_point"
+                v-model="formData.views"
                 type="text"
-                name="c3_point"
-                id="c3_point"
+                name="views"
+                id="views"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
@@ -210,84 +158,15 @@
 
             <div class="col-span-2">
               <label
-                for="c4"
+                for="applicants"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >c4</label
+                >applicants</label
               >
               <input
-                v-model="formData.c4"
+                v-model="formData.applicants"
                 type="text"
-                name="c4"
-                id="c4"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-              />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                for="c4_point"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >c4_point</label
-              >
-              <input
-                v-model="formData.c4_point"
-                type="text"
-                name="c4_point"
-                id="c4_point"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-              />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                for="cr_answer"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >cr_answer</label
-              >
-              <input
-                v-model="formData.cr_answer"
-                type="text"
-                name="cr_answer"
-                id="cr_answer"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-              />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                for="em_id"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >em_id</label
-              >
-              <input
-                v-model="formData.em_id"
-                type="text"
-                name="em_id"
-                id="em_id"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-                @input="formData.em_id = validateNumber($event.target.value)"
-              />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                for="image_url"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >image_url</label
-              >
-              <input
-                v-model="formData.image_url"
-                type="text"
-                name="image_url"
-                id="image_url"
+                name="applicants"
+                id="applicants"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
@@ -327,28 +206,21 @@ export default {
     return {
       isOpen: false,
       formData: {
-        exam_id: "",
-        extype_id: "",
-        question_1: "",
-        question_2: "",
-        question_3: "",
-        c1: "",
-        c1_point: "",
-        c2: "",
-        c2_point: "",
-        c3: "",
-        c3_point: "",
-        c4: "",
-        c4_point: "",
-        cr_answer: "",
-        em_id: "",
-        statusquestion: "1", // Default value for statusquestion
-        image_url: "",
+        image: "",
+        Company: "",
+        Header: "",
+        Description: "",
+        department: "",
+        salary: "",
+        sex: "",
+        views: "",
+        applicants: "",
+        Post_status: "1",
       },
     };
   },
   methods: {
-    async addExam() {
+    async addPost() {
       // ตรวจสอบว่ามีข้อมูลใดๆ ที่ยังไม่ถูกกรอกหรือไม่
       for (const key in this.formData) {
         if (this.formData[key] === "") {
@@ -367,17 +239,17 @@ export default {
         cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
-          // เรียกใช้งาน addExamRequest หลังจากผู้ใช้ยืนยันการเพิ่มข้อมูล
-          this.addExamRequest();
+          // เรียกใช้งาน addPostRequest หลังจากผู้ใช้ยืนยันการเพิ่มข้อมูล
+          this.addPostRequest();
           window.location.reload(); // รีโหลดหน้า
         }
       });
     },
-    async addExamRequest() {
+    async addPostRequest() {
       try {
         // ส่งคำขอเพิ่มข้อมูลไปยัง API โดยใช้ข้อมูลจาก this.formData
         const response = await axios.post(
-          `${import.meta.env.VITE_API_EXAM}/exam/insert-exam`,
+          `${import.meta.env.VITE_API_POST}/post/insert-post`,
           this.formData
         );
 

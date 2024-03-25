@@ -2,13 +2,13 @@
   <div class="popup-overlay flex justify-center items-center">
     <div class="popup-content justify-center bg-gray-900 p-8 rounded-lg mt-10">
       <div>
-        <form @submit.prevent="addExam" class="p-0 md:p-5">
+        <form @submit.prevent="updateExamRequest" class="p-0 md:p-5">
           <!-- Modal header -->
           <div
             class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
           >
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-              เพิ่มข้อสอบ
+              แก้ข้อสอบ
             </h3>
             <!-- Close button -->
             <button @click.prevent="ModalClose" class="text-white text-5xl">
@@ -277,6 +277,22 @@
               />
             </div>
 
+            <div class="col-span-2 sm:col-span-1">
+              <label
+                for="statusquestion"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >statusquestion</label
+              >
+              <select
+                v-model="formData.statusquestion"
+                id="statusquestion"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              >
+                <option value="1">เปิด</option>
+                <option value="0">ปิด</option>
+              </select>
+            </div>
+
             <div class="col-span-2">
               <label
                 for="image_url"
@@ -323,6 +339,9 @@ import Swal from "sweetalert2";
 
 export default {
   name: "AddPopup",
+  props: {
+    exam: Object, // รับข้อมูลข้อสอบที่จะแก้ไข
+  },
   data() {
     return {
       isOpen: false,
@@ -342,10 +361,14 @@ export default {
         c4_point: "",
         cr_answer: "",
         em_id: "",
-        statusquestion: "1", // Default value for statusquestion
+        statusquestion: "", // Default value for statusquestion
         image_url: "",
       },
     };
+  },
+  created() {
+    // นำข้อมูลข้อสอบที่ได้รับมาแสดงในฟอร์มเมื่อคอมโพเนนต์ถูกสร้างขึ้น
+    this.formData = { ...this.exam };
   },
   methods: {
     async addExam() {
@@ -356,9 +379,11 @@ export default {
           return; // หยุดการทำงานของฟังก์ชันถ้ามีข้อมูลที่ยังไม่ถูกกรอก
         }
       }
+
+      // แสดงข้อความยืนยัน
       Swal.fire({
-        title: "Confirm Add",
-        text: "Are you sure you want to add?",
+        title: "Confirm Update",
+        text: "Are you sure you want to update?",
         icon: "info",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -367,40 +392,60 @@ export default {
         cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
-          // เรียกใช้งาน addExamRequest หลังจากผู้ใช้ยืนยันการเพิ่มข้อมูล
-          this.addExamRequest();
-          window.location.reload(); // รีโหลดหน้า
+          // เรียกใช้งาน updateExamRequest หลังจากผู้ใช้ยืนยันการแก้ไขข้อมูล
+          this.updateExamRequest();
         }
       });
     },
-    async addExamRequest() {
+
+    async updateExamRequest() {
       try {
-        // ส่งคำขอเพิ่มข้อมูลไปยัง API โดยใช้ข้อมูลจาก this.formData
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_EXAM}/exam/insert-exam`,
+        // ส่งคำขอแก้ไขข้อมูลไปยัง API โดยใช้ข้อมูลจาก this.formData
+        await axios.put(
+          `${import.meta.env.VITE_API_EXAM}/exam/update-exam/${
+            this.formData._id
+          }`,
           this.formData
         );
 
-        // หลังจากเพิ่มข้อมูลสำเร็จ
-        Swal.fire("Added!", "Data has been added successfully", "success");
-        // Refresh the page
-
-        // ไม่ต้องรีเฟรชหน้าหรือเปลี่ยนเส้นทาง URL ที่นี่
-        // ดำเนินการเพิ่มข้อมูลในรายการที่แสดงผล ตามต้องการ
+        // หลังจากแก้ไขข้อมูลสำเร็จ
+        // แสดงข้อความยืนยัน
+        Swal.fire({
+          title: "Confirm Update",
+          text: "Are you sure you want to update?",
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
+        }).then((result) => {
+          // หากผู้ใช้กดปุ่ม OK
+          if (result.isConfirmed) {
+            window.location.reload(); // รีโหลดหน้า
+          }
+        });
       } catch (error) {
-        console.error("Error adding data:", error);
-        Swal.fire("Error!", "Failed to add data", "error");
+        console.error("Error updating data:", error);
+        Swal.fire("Error!", "Failed to update data", "error");
       }
     },
+
     ModalClose() {
       this.$emit("close");
     },
+
     validateNumber(event) {
       const inputValue = event.target.value;
       const regex = /^[0-9]*$/; // ตรวจสอบว่าเป็นตัวเลขหรือไม่
       if (!regex.test(inputValue)) {
         event.target.value = inputValue.replace(/[^0-9]/g, ""); // ลบอักขระที่ไม่ใช่ตัวเลข
       }
+    },
+    updateExam() {
+      // ทำการอัพเดตข้อมูลข้อสอบโดยใช้ this.formData
+      // ในที่นี้คุณสามารถใช้ axios หรือวิธีการส่งคำขอ API ที่คุณใช้งานอยู่เพื่ออัพเดตข้อมูลข้อสอบ
+      console.log("Updated exam data:", this.formData);
     },
   },
 };
