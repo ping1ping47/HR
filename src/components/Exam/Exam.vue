@@ -42,7 +42,7 @@
       </div>
 
       <h1
-        class="my-4 text-3xl text-start font-medium tracking-wider text-purple-700 flex justify-center"
+        class="my-4 text-3xl flex justify-center font-medium tracking-wider text-purple-700"
       >
         ข้อมูลข้อสอบ
       </h1>

@@ -356,15 +356,14 @@ export default {
       };
     },
 
-    // เมื่อกดปุ่มเพื่อเพิ่มข้อสอบ
     async addExam() {
-      // ตรวจสอบว่ามีการเลือกรูปหรือไม่
-      if (!this.formData.image) {
+      // Check if the previewImage is empty
+      if (!this.previewImage) {
         Swal.fire("Error!", "Please upload an image", "error");
         return;
       }
 
-      // แสดง dialog ยืนยันการเพิ่มข้อมูล
+      // Show confirmation dialog
       Swal.fire({
         title: "Confirm Add",
         text: "Are you sure you want to add?",
@@ -375,28 +374,33 @@ export default {
         confirmButtonText: "Confirm",
         cancelButtonText: "Cancel",
       }).then((result) => {
-        // หากผู้ใช้กดตกลง
+        // If the user clicks OK
         if (result.isConfirmed) {
-          // ตรวจสอบว่าข้อมูลใดข้อมูลหนึ่งไม่ถูกกรอก
+          // Check if any other field is empty
           for (const key in this.formData) {
-            if (!this.formData[key]) {
+            // Exclude checking for image and statusquestion
+            if (
+              key !== "image" &&
+              key !== "statusquestion" &&
+              !this.formData[key]
+            ) {
               Swal.fire("Error!", `${key} is required`, "error");
               return;
             }
           }
-          // ส่งคำขอเพิ่มข้อมูลไปยัง API
-          this.addExamRequest();
+          this.addExamRequest(); // Proceed with adding the exam
         }
       });
     },
 
-    // ส่งคำขอเพิ่มข้อมูลไปยัง API
     async addExamRequest() {
       try {
+        // Send a request to add data to the API using the data from this.formData
         const response = await axios.post(
-          `${import.meta.env.VITE_API_EXAM}/post/insert-exam`,
+          `${import.meta.env.VITE_API_EXAM}/exam/insert-exam`,
           this.formData
         );
+        // After successfully adding data
         Swal.fire("Added!", "Data has been added successfully", "success");
       } catch (error) {
         console.error("Error adding data:", error);

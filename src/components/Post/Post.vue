@@ -1,57 +1,57 @@
 <template>
-  <div
-    class="w-screen container rounded-2xl bg-black flex flex-col dark:bg-slate-900/70"
-  >
-    <div class="flex justify-center">
-      <Graph />
-    </div>
+  <div class="rounded-2xl bg-black flex flex-col dark:bg-slate-900/70">
+    <div class="flex-1">
+      <div class="p-3">
+        <input
+          type="text"
+          v-model="searchText"
+          placeholder="ค้นหาตำแหน่งงาน..."
+          class="px-3 py-1 border border-gray-300 rounded-md bg-black text-white"
+          @input="searchJobByPosition"
+        />
+      </div>
 
-    <div class="flex-1 md:px-1 md:py-2">
-      <div class="flex">
-        <div class="p-3 flex">
-          <input
-            type="text"
-            v-model="searchText"
-            placeholder="ค้นหาตำแหน่งงาน..."
-            class="px-3 py-1 border border-gray-300 rounded-md bg-black text-white h-10"
-            @input="searchJobByPosition"
-          />
-        </div>
+      <div class="col-span-1 sm:col-span-1">
+        <label
+          for="status"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >เลือกสถานะ</label
+        >
+        <select
+          id="status"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-36 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+        >
+          <option value="ALL">ทั้งหมด</option>
+          <option value="ON">เปิดรับสมัคร</option>
+          <option value="OFF">ปิดรับสมัคร</option>
+        </select>
+      </div>
+      <div
+        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
+      >
+        <button
+          @click="AddPopup = true"
+          class="bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
+        >
+          เพิ่มข้อสอบ
+        </button>
 
-        <div class="p-3 flex">
-          <label
-            for="status"
-            class="p-2 text-sm font-medium text-gray-900 dark:text-white"
-            >เลือกสถานะ</label
-          >
-          <select
-            id="status"
-            class="ml-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          >
-            <option value="ALL">ทั้งหมด</option>
-            <option value="ON">เปิดรับสมัคร</option>
-            <option value="OFF">ปิดรับสมัคร</option>
-          </select>
-        </div>
-
-        <div class="p-3 flex">
-          <button
-            @click="AddPopup = true"
-            class="bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
-          >
-            เพิ่มข้อสอบ
-          </button>
-          <Add v-if="AddPopup" :post="AddPopup" @close="AddPopup = false" />
-        </div>
+        <Add v-if="AddPopup" :post="AddPopup" @close="AddPopup = false" />
       </div>
 
       <h1
-        class="my-4 text-3xl text-start font-medium tracking-wider text-purple-700 flex justify-center"
+        class="my-4 text-3xl text-center font-medium tracking-wider text-purple-700"
       >
         ข้อมูลการประกาศงาน
       </h1>
 
-      <table class="w-30 mt-6">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-4 mb-6">
+        <div class="rounded-2xl flex-col dark:bg-slate-900/70 bg-white flex">
+          <h1>กราฟวิเคราะจำนวนผู้สมัคร</h1>
+        </div>
+      </div>
+
+      <table class="w-24 mt-6">
         <thead>
           <tr>
             <th class="border border-gray-300 text-center px-2 py-2">ลำดับ</th>
@@ -62,7 +62,7 @@
             <th class="border border-gray-300 text-center px-2 py-2 th-shorten">
               หัวข้อ
             </th>
-            <th class="border border-gray-300 text-center px-2 py-2 th-shorten">
+            <th class="border border-gray-300 text-center px-2 py-2">
               ตำแหน่ง
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
@@ -96,70 +96,66 @@
             :key="post._id"
             class="border-b border-gray-200 hover:bg-gray-50 dark:hover:bg-slate-800"
           >
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ index + 1 }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               <img
                 :src="post.image"
                 alt="Job Image"
                 class="w-10 h-10 rounded-full"
               />
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               <span v-if="post.Company.length <= 24">{{ post.Company }}</span>
               <span v-else>{{ post.Company.slice(0, 21) }}... </span>
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               <span v-if="post.Header.length <= 24">{{ post.Header }}</span>
               <span v-else>{{ post.Header.slice(0, 21) }}... </span>
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.department }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.salary }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.sex }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.post_date }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.post_date }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.Update_date }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.views }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.applicants }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center">
               {{ post.Post_status }}
             </td>
-            <td class="py-2 border border-gray-300 space-x-2 table-cell">
+            <td class="py-2 border border-gray-300 text-center space-x-2">
               <button
                 @click="openDetailsPopup(post)"
                 class="btn-details bg-blue-500 hover:bg-blue-600"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  width="24"
-                  height="24"
+                  class="h-5 w-5 text-white p-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 5l7 7-7 7"
+                    fill-rule="evenodd"
+                    d="M10 2a1 1 0 00-.553.168l-5 3A1 1 0 004 6v5a1 1 0 00.447.832l5 3a1 1 0 001.106 0l5-3A1 1 0 0016 11V6a1 1 0 00-.447-.832l-5-3A1 1 0 0010 2zM6 7.236v5.528L9.037 10 6 7.236z"
+                    clip-rule="evenodd"
                   />
                 </svg>
               </button>
@@ -174,36 +170,14 @@
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  width="24"
-                  height="24"
+                  class="h-5 w-5 text-white p-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M16 17L21 12 16 7"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 7l-5 5 5 5"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12h13"
+                    fill-rule="evenodd"
+                    d="M5.293 12.707a1 1 0 010-1.414L13.586 3H11a1 1 0 110-2h6a1 1 0 011 1v6a1 1 0 01-2 0V5.414l-8.293 8.293a1 1 0 01-1.414 0zM18 17a1 1 0 01-1 1H3a1 1 0 01-1-1v-6a1 1 0 011-1h10zm-5 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm-3 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm6-1a1 1 0 011 1h1a1 1 0 110 2h-1a1 1 0 01-1-1V9a1 1 0 011-1z"
+                    clip-rule="evenodd"
                   />
                 </svg>
               </button>
@@ -218,18 +192,14 @@
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  width="24"
-                  height="24"
+                  class="h-5 w-5 text-white p-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
+                    fill-rule="evenodd"
+                    d="M5 4a1 1 0 011-1h8a1 1 0 011 1v1h2a1 1 0 110 2H3a1 1 0 110-2h2V4zm10 4a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1V9a1 1 0 011-1h10zm-5 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm-3 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm6-1a1 1 0 011 1h1a1 1 0 110 2h-1a1 1 0 01-1-1V9a1 1 0 011-1z"
+                    clip-rule="evenodd"
                   />
                 </svg>
               </button>
@@ -250,74 +220,65 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Add from "./PostAdd.vue";
 import Edit from "./PostEdit.vue";
 import View from "./PostView.vue";
-import Graph from "./Graph.vue";
-
 export default {
   components: {
     Add,
     Edit,
     View,
-    Graph,
   },
-
-  setup() {
-    const posts = ref([]);
-    const searchText = ref("");
-    const ShowPopup = ref(false);
-    const AddPopup = ref(false);
-    const EditPopup = ref(false);
-    const PostToEdit = ref(null);
-    const selectedPost = ref(null);
-
-    const fetchPosts = async () => {
+  data() {
+    return {
+      posts: [],
+      searchText: "",
+      ShowPopup: false,
+      AddPopup: false,
+      EditPopup: false,
+      PostToEdit: null,
+      isDeleteModalOpen: false,
+      selectedPost: null,
+    };
+  },
+  mounted() {
+    this.fetchPosts();
+    // โดยเพิ่มเงื่อนไขตรวจสอบหาก this.posts ไม่มีข้อมูล ให้เรียกใช้ fetchPosts อีกครั้ง
+    if (this.posts.length === 0) {
+      this.fetchPosts();
+    }
+  },
+  props: {
+    post: Object,
+  },
+  methods: {
+    async fetchPosts() {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_POST}/post`
         );
-        if (
-          response.status === 200 &&
-          response.data &&
-          Array.isArray(response.data.data)
-        ) {
-          posts.value = response.data.data;
+        if (response.data && Array.isArray(response.data.data)) {
+          this.posts = response.data.data;
         } else {
-          console.error(
-            "Invalid response format or empty data array:",
-            response.data
-          );
+          console.error("Response data is not an array:", response.data);
         }
       } catch (error) {
         console.error("Error fetching posts:", error);
-        // Set posts to an empty array in case of error
-        posts.value = [];
       }
-      console.log(posts.value); // Corrected this line
-    };
-
-    onMounted(async () => {
-      await fetchPosts(); // Corrected this line
-    });
-
-    const togglePopup = () => {
-      AddPopup.value = !AddPopup.value;
-    };
-
-    const openEditModal = (post) => {
-      PostToEdit.value = post;
-      EditPopup.value = true;
-    };
-
-    const handleClose = () => {
-      ShowPopup.value = false;
-    };
-
-    const deletef = async (post) => {
+    },
+    togglePopup() {
+      this.AddPopup = !this.AddPopup;
+    },
+    openEditModal(post) {
+      this.PostToEdit = post;
+      this.EditPopup = true;
+    },
+    handleClose() {
+      this.$emit("close");
+    },
+    async deletef(post) {
       Swal.fire({
         title: "ยืนยันการลบ",
         text: "คุณแน่ใจหรือไม่ที่จะลบข้อมูล?",
@@ -329,77 +290,36 @@ export default {
         cancelButtonText: "ยกเลิก",
       }).then((result) => {
         if (result.isConfirmed) {
-          deletePost(post);
+          this.deletePost(post);
         }
       });
-    };
-
-    const deletePost = async (post) => {
+    },
+    async deletePost(post) {
       try {
         await axios.delete(
           `${import.meta.env.VITE_API_POST}/post/delete-post/${post._id}`
         );
         Swal.fire("ลบแล้ว!", "ข้อมูลถูกลบออกสำเร็จ", "success");
-        posts.value = posts.value.filter((item) => item._id !== post._id);
+        this.posts = this.posts.filter((item) => item._id !== post._id);
       } catch (error) {
         console.error("Error deleting data:", error);
         Swal.fire("เกิดข้อผิดพลาด!", "ไม่สามารถลบข้อมูลได้", "error");
       }
-    };
-
-    const searchPostById = () => {
-      if (searchText.value.trim()) {
-        const filteredPosts = posts.value.filter((post) =>
-          post.id.includes(searchText.value)
+    },
+    searchPostById() {
+      if (this.searchText.trim()) {
+        const filteredPosts = this.posts.filter((post) =>
+          post.id.includes(this.searchText)
         );
-        posts.value = filteredPosts;
+        this.posts = filteredPosts;
       } else {
-        fetchPosts();
+        this.fetchPosts();
       }
-    };
-
-    const openDetailsPopup = (post) => {
-      selectedPost.value = post;
-      ShowPopup.value = true;
-    };
-
-    return {
-      posts,
-      searchText,
-      ShowPopup,
-      AddPopup,
-      EditPopup,
-      PostToEdit,
-      selectedPost,
-      fetchPosts,
-      togglePopup,
-      openEditModal,
-      handleClose,
-      deletef,
-      deletePost,
-      searchPostById,
-      openDetailsPopup,
-    };
+    },
+    openDetailsPopup(post) {
+      this.selectedPost = post;
+      this.ShowPopup = true;
+    },
   },
 };
 </script>
-
-<style>
-/* Add this style block to your component */
-.table-cell {
-  padding: 10px; /* Adjust the padding as needed */
-}
-
-/* Add this style block to your component */
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.scrollable {
-  flex: 1; /* ทำให้ตารางขยายตามขนาดรายการ */
-  overflow-y: scroll; /* เพิ่มการเลื่อนแนวตั้งเมื่อรายการมีขนาดใหญ่กว่า */
-  overflow-x: auto; /* เพิ่มการเลื่อนแนวนอนเมื่อรายการมีขนาดใหญ่กว่า */
-}
-</style>
