@@ -8,7 +8,7 @@
             class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
           >
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-              แก้ข้อสอบ
+              แก้ข้อสอบzz
             </h3>
             <!-- Close button -->
             <button @click.prevent="ModalClose" class="text-white text-5xl">

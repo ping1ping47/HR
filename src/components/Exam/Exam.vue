@@ -1,52 +1,53 @@
 <template>
-  <div class="rounded-2xl bg-black flex flex-col dark:bg-slate-900/70">
-    <div class="flex-1">
-      <div class="p-3">
-        <input
-          type="text"
-          v-model="searchText"
-          placeholder="ค้นหาข้อสอบ..."
-          class="px-3 py-1 border border-gray-300 rounded-md bg-black text-white"
-          @input="searchExamById"
-        />
+  <div
+    class="w-screen container rounded-2xl bg-black flex flex-col dark:bg-slate-900/70"
+  >
+    <div class="flex-1 md:px-1 md:py-2">
+      <div class="flex">
+        <div class="p-3 flex">
+          <input
+            type="text"
+            v-model="searchText"
+            placeholder="ค้นหาตำแหน่งงาน..."
+            class="px-3 py-1 border border-gray-300 rounded-md bg-black text-white h-10"
+            @input="searchExamById"
+          />
+        </div>
+
+        <div class="p-3 flex">
+          <label
+            for="status"
+            class="p-2 text-sm font-medium text-gray-900 dark:text-white"
+            >เลือกสถานะ</label
+          >
+          <select
+            id="status"
+            class="ml-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+          >
+            <option value="ALL">ทั้งหมด</option>
+            <option value="ON">เปิด</option>
+            <option value="OFF">ปิด</option>
+          </select>
+        </div>
+
+        <div class="p-3 flex">
+          <button
+            @click="AddPopup = true"
+            class="bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
+          >
+            เพิ่มข้อสอบ
+          </button>
+          <Add v-if="AddPopup" :exam="AddPopup" @close="AddPopup = false" />
+        </div>
       </div>
 
-      <div class="col-span-1 sm:col-span-1">
-        <label
-          for="category"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >เลือกตำแน่ง</label
-        >
-        <select
-          id="category"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-36 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >
-          <option value="ALL">ทั้งหมด</option>
-          <option value="ON">เปิด</option>
-          <option value="OFF">ปิด</option>
-        </select>
-      </div>
-      <div
-        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
-      >
-        <button
-          @click="addPopup = true"
-          class="bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
-        >
-          เพิ่มข้อสอบ
-        </button>
-
-        <Add v-if="addPopup" :exam="addPopup" @close="addPopup = false" />
-      </div>
-
-      <!-- เปลี่ยนข้อความใน <h1> เป็น ข้อมูลการสมัครงาน -->
       <h1
-        class="my-4 text-3xl text-center font-medium tracking-wider text-purple-700"
+        class="my-4 text-3xl text-start font-medium tracking-wider text-purple-700 flex justify-center"
       >
-        ข้อมูลการสมัครงาน
+        ข้อมูลข้อสอบ
       </h1>
 
-      <table class="w-full mt-6">
+      <table class="w-30 mt-6">
         <thead>
           <tr>
             <th class="border border-gray-300 text-center px-2 py-2">ลำดับ</th>
@@ -106,56 +107,64 @@
             :key="exam._id"
             class="border-b border-gray-200 hover:bg-gray-50 dark:hover:bg-slate-800"
           >
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ index + 1 }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.exam_id }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.extype_id }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ exam.question_1 }}
+            <td class="py-4 border border-gray-300 table-cell">
+              <span v-if="exam.question_1.length <= 24">{{
+                exam.question_1
+              }}</span>
+              <span v-else>{{ exam.question_1.slice(0, 21) }}... </span>
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ exam.question_2 }}
+            <td class="py-4 border border-gray-300 table-cell">
+              <span v-if="exam.question_2.length <= 24">{{
+                exam.question_2
+              }}</span>
+              <span v-else>{{ exam.question_2.slice(0, 21) }}... </span>
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ exam.question_3 }}
+            <td class="py-4 border border-gray-300 table-cell">
+              <span v-if="exam.question_3.length <= 24">{{
+                exam.question_3
+              }}</span>
+              <span v-else>{{ exam.question_3.slice(0, 21) }}... </span>
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.c1 }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300table-cell">
               {{ exam.c1_point }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.c2 }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.c2_point }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.c3 }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.c3_point }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.c4 }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.cr_answer }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.em_id }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ exam.statusquestion }}
             </td>
-
-            <td class="py-2 border border-gray-300 text-center space-x-2">
+            <td class="py-4 border border-gray-300 table-cell">
               <button
                 @click="openDetailsPopup(exam)"
                 class="btn-details bg-blue-500 hover:bg-blue-600"
@@ -166,6 +175,8 @@
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  width="24"
+                  height="24"
                 >
                   <path
                     stroke-linecap="round"
@@ -180,10 +191,9 @@
                 :exam="selectedExam"
                 @close="ShowPopup = false"
               />
-
               <button
                 @click="openEditModal(exam)"
-                class="btn-edit bg-green-500 hover:bg-green-600"
+                class="btn-edit bg-yellow-500 hover:bg-yellow-600"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -191,6 +201,8 @@
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  width="24"
+                  height="24"
                 >
                   <path
                     stroke-linecap="round"
@@ -220,10 +232,9 @@
               </button>
               <Edit
                 v-if="EditPopup"
-                :exam="examToEdit"
+                :exam="ExamToEdit"
                 @close="EditPopup = false"
               />
-
               <button
                 @click="deletef(exam)"
                 class="btn-delete bg-red-500 hover:bg-red-600"
@@ -234,6 +245,8 @@
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  width="24"
+                  height="24"
                 >
                   <path
                     stroke-linecap="round"
@@ -260,6 +273,7 @@
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Add from "./ExamAdd.vue";
@@ -272,99 +286,144 @@ export default {
     Edit,
     View,
   },
-  data() {
-    return {
-      exams: [],
-      searchText: "",
-      ShowPopup: false,
-      addPopup: false,
-      EditPopup: false,
-      examToEdit: null,
-      isDeleteModalOpen: false,
-      selectedExam: null,
-    };
-  },
+  setup() {
+    // Define reactive variables
+    const exams = ref([]);
+    const originalExams = ref([]);
+    const searchText = ref("");
+    const ShowPopup = ref(false);
+    const AddPopup = ref(false);
+    const EditPopup = ref(false);
+    const ExamToEdit = ref(null);
+    const selectedExam = ref(null);
 
-  mounted() {
-    this.fetchExams();
-    // โดยเพิ่มเงื่อนไขตรวจสอบหาก this.exams ไม่มีข้อมูล ให้เรียกใช้ fetchExams อีกครั้ง
-    if (this.exams.length === 0) {
-      this.fetchExams();
-    }
-  },
-
-  props: {
-    exam: Object,
-  },
-  methods: {
-    async fetchExams() {
+    // Fetch exams data from API
+    const fetchExams = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_EXAM}/exam`
         );
-        if (response.data && Array.isArray(response.data.data)) {
-          this.exams = response.data.data;
+        if (
+          response.status === 200 &&
+          response.data &&
+          Array.isArray(response.data.data)
+        ) {
+          exams.value = response.data.data;
+          originalExams.value = response.data.data; // Store original data
         } else {
-          console.error("Response data is not an array:", response.data);
+          console.error(
+            "Invalid response format or empty data array:",
+            response.data
+          );
         }
       } catch (error) {
         console.error("Error fetching exams:", error);
+        // Set exams to an empty array in case of error
+        exams.value = [];
+        originalExams.value = [];
       }
-    },
-    togglePopup() {
-      this.addPopup = !this.addPopup;
-    },
-    openEditModal(exam) {
-      this.examToEdit = exam;
-      this.EditPopup = true;
-    },
+    };
 
-    handleClose() {
-      this.$emit("close");
-    },
+    // Call fetchExams when component is mounted
+    onMounted(async () => {
+      await fetchExams();
+    });
 
-    async deletef(exam) {
+    const togglePopup = () => {
+      AddPopup.value = !AddPopup.value;
+    };
+
+    const openEditModal = (exam) => {
+      ExamToEdit.value = exam;
+      EditPopup.value = true;
+    };
+
+    const handleClose = () => {
+      ShowPopup.value = false;
+    };
+
+    const deletef = async (exam) => {
       Swal.fire({
-        title: "ยืนยันการลบ",
-        text: "คุณแน่ใจหรือไม่ที่จะลบข้อมูล?",
+        title: "Confirm Delete",
+        text: "Are you sure you want to delete this exam?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "ยืนยัน",
-        cancelButtonText: "ยกเลิก",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
-          this.deleteExam(exam);
+          deleteExam(exam);
         }
       });
-    },
-    async deleteExam(exam) {
+    };
+
+    const deleteExam = async (exam) => {
       try {
         await axios.delete(
           `${import.meta.env.VITE_API_EXAM}/exam/delete-exam/${exam._id}`
         );
-        Swal.fire("ลบแล้ว!", "ข้อมูลถูกลบออกสำเร็จ", "success");
-        this.exams = this.exams.filter((item) => item._id !== exam._id);
-      } catch (error) {
-        console.error("Error deleting data:", error);
-        Swal.fire("เกิดข้อผิดพลาด!", "ไม่สามารถลบข้อมูลได้", "error");
-      }
-    },
-    searchExamById() {
-      if (this.searchText.trim()) {
-        const filteredExams = this.exams.filter((exam) =>
-          exam.exam_id.includes(this.searchText)
+        Swal.fire("Deleted!", "The exam has been deleted.", "success");
+        exams.value = exams.value.filter((item) => item._id !== exam._id);
+        originalExams.value = originalExams.value.filter(
+          (item) => item._id !== exam._id
         );
-        this.exams = filteredExams;
-      } else {
-        this.fetchExams();
+      } catch (error) {
+        console.error("Error deleting exam:", error);
+        Swal.fire("Error!", "Failed to delete the exam.", "error");
       }
-    },
-    openDetailsPopup(exam) {
-      this.selectedExam = exam;
-      this.ShowPopup = true;
-    },
+    };
+
+    const searchExamById = () => {
+      if (searchText.value.trim()) {
+        const filteredExams = originalExams.value.filter((exam) =>
+          exam.exam_id.includes(searchText.value)
+        );
+        exams.value = filteredExams;
+      } else {
+        exams.value = [...originalExams.value]; // Reset to original data
+      }
+    };
+
+    const openDetailsPopup = (exam) => {
+      selectedExam.value = exam;
+      ShowPopup.value = true;
+    };
+
+    return {
+      exams,
+      searchText,
+      ShowPopup,
+      AddPopup,
+      EditPopup,
+      ExamToEdit,
+      selectedExam,
+      fetchExams,
+      togglePopup,
+      openEditModal,
+      handleClose,
+      deletef,
+      deleteExam,
+      searchExamById,
+      openDetailsPopup,
+    };
   },
 };
 </script>
+
+
+
+<style>
+/* Add this style block to your component */
+.table-cell {
+  padding: 10px; /* Adjust the padding as needed */
+}
+
+/* Add this style block to your component */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+</style>

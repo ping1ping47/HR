@@ -273,24 +273,22 @@
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
                 required=""
-                @input="formData.em_id = validateNumber($event.target.value)"
+                @input="validateNumber"
               />
             </div>
 
             <div class="col-span-2">
               <label
-                for="image_url"
+                for="image"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >image_url</label
+                >รูป</label
               >
+              <img :src="previewImage" class="uploading-image" />
               <input
-                v-model="formData.image_url"
-                type="text"
-                name="image_url"
-                id="image_url"
+                type="file"
+                accept="image/jpeg"
+                @change="uploadImage"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
               />
             </div>
           </div>
@@ -343,19 +341,30 @@ export default {
         cr_answer: "",
         em_id: "",
         statusquestion: "1", // Default value for statusquestion
-        image_url: "",
+        image: "",
       },
+      previewImage: null,
     };
   },
   methods: {
+    uploadImage(e) {
+      const image = e.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      reader.onload = (e) => {
+        this.previewImage = e.target.result;
+      };
+    },
+
+    // เมื่อกดปุ่มเพื่อเพิ่มข้อสอบ
     async addExam() {
-      // ตรวจสอบว่ามีข้อมูลใดๆ ที่ยังไม่ถูกกรอกหรือไม่
-      for (const key in this.formData) {
-        if (this.formData[key] === "") {
-          Swal.fire("Error!", "Please fill in all fields", "error");
-          return; // หยุดการทำงานของฟังก์ชันถ้ามีข้อมูลที่ยังไม่ถูกกรอก
-        }
+      // ตรวจสอบว่ามีการเลือกรูปหรือไม่
+      if (!this.formData.image) {
+        Swal.fire("Error!", "Please upload an image", "error");
+        return;
       }
+
+      // แสดง dialog ยืนยันการเพิ่มข้อมูล
       Swal.fire({
         title: "Confirm Add",
         text: "Are you sure you want to add?",
@@ -366,27 +375,29 @@ export default {
         confirmButtonText: "Confirm",
         cancelButtonText: "Cancel",
       }).then((result) => {
+        // หากผู้ใช้กดตกลง
         if (result.isConfirmed) {
-          // เรียกใช้งาน addExamRequest หลังจากผู้ใช้ยืนยันการเพิ่มข้อมูล
+          // ตรวจสอบว่าข้อมูลใดข้อมูลหนึ่งไม่ถูกกรอก
+          for (const key in this.formData) {
+            if (!this.formData[key]) {
+              Swal.fire("Error!", `${key} is required`, "error");
+              return;
+            }
+          }
+          // ส่งคำขอเพิ่มข้อมูลไปยัง API
           this.addExamRequest();
-          window.location.reload(); // รีโหลดหน้า
         }
       });
     },
+
+    // ส่งคำขอเพิ่มข้อมูลไปยัง API
     async addExamRequest() {
       try {
-        // ส่งคำขอเพิ่มข้อมูลไปยัง API โดยใช้ข้อมูลจาก this.formData
         const response = await axios.post(
-          `${import.meta.env.VITE_API_EXAM}/exam/insert-exam`,
+          `${import.meta.env.VITE_API_EXAM}/post/insert-exam`,
           this.formData
         );
-
-        // หลังจากเพิ่มข้อมูลสำเร็จ
         Swal.fire("Added!", "Data has been added successfully", "success");
-        // Refresh the page
-
-        // ไม่ต้องรีเฟรชหน้าหรือเปลี่ยนเส้นทาง URL ที่นี่
-        // ดำเนินการเพิ่มข้อมูลในรายการที่แสดงผล ตามต้องการ
       } catch (error) {
         console.error("Error adding data:", error);
         Swal.fire("Error!", "Failed to add data", "error");
@@ -407,17 +418,17 @@ export default {
 </script>
 
 <style scoped>
+/* Styles for popup overlay and content */
 .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  pointer-events: none; /* เพิ่ม property เพื่อบล็อกการเชื่อมต่อที่ปุ่มหลัง */
 }
 
 .popup-content {
@@ -427,6 +438,6 @@ export default {
   width: 100%;
   max-height: 90%;
   overflow-y: auto;
-  pointer-events: auto; /* กำหนดให้เมาส์และการคลิกทำงานในเนื้อหาของป๊อปอัพ */
+  background-color: #1a202c; /* Adjust as needed */
 }
 </style>

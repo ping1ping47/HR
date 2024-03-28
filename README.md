@@ -30,13 +30,16 @@ npm run build
 
 npm i
 
-
 npm install -D tailwindcss postcss autoprefixer
-
 
 npm install axios
 
-
 npm i sweetalert2
 
+npm install chartjs-adapter-date-fns
 
+npm install chart.js --save
+
+npm install chartjs-plugin-datalabels
+
+npm install chart.js

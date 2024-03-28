@@ -293,22 +293,17 @@
               </select>
             </div>
 
-            <div class="col-span-2">
-              <label
-                for="image_url"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >image_url</label
-              >
-              <input
-                v-model="formData.image_url"
-                type="text"
-                name="image_url"
-                id="image_url"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-              />
-            </div>
+            <label
+              for="image"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Image</label
+            >
+            <input
+              type="file"
+              accept="image/*"
+              @change="handleImageUpload"
+              class="block w-full p-2.5"
+            />
           </div>
           <div class="p-3 mt-2 text-center space-x-4 md:block">
             <!-- Save and Close buttons -->
@@ -362,7 +357,7 @@ export default {
         cr_answer: "",
         em_id: "",
         statusquestion: "", // Default value for statusquestion
-        image_url: "",
+        image: "",
       },
     };
   },
@@ -371,6 +366,17 @@ export default {
     this.formData = { ...this.exam };
   },
   methods: {
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Convert the image file to a base64 string
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.formData.image = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
     async addExam() {
       // ตรวจสอบว่ามีข้อมูลใดๆ ที่ยังไม่ถูกกรอกหรือไม่
       for (const key in this.formData) {

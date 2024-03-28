@@ -44,10 +44,14 @@
           </label>
           <div class="border p-2 rounded-md">
             <img
-              :src="formData.image_url"
+              v-if="formData.image"
+              :src="formData.image"
               alt="Image"
               class="max-w-full h-auto"
             />
+            <p v-else class="text-gray-900 dark:text-white">
+              No image uploaded
+            </p>
           </div>
         </div>
 
@@ -92,7 +96,8 @@
               <label class="block font-medium text-gray-900 dark:text-white"
                 >ข้อ {{ choice }}</label
               >
-              <p class="text-gray-900 dark:text-white">คำตอบ
+              <p class="text-gray-900 dark:text-white">
+                คำตอบ
                 {{ formData["c" + choice] }}
               </p>
               <p class="text-gray-900 dark:text-white">
@@ -155,7 +160,6 @@
 </template>
   
 <script>
-
 export default {
   name: "ShowPopup",
   props: {
@@ -180,7 +184,7 @@ export default {
         cr_answer: "",
         em_id: "",
         statusquestion: "", // Default value for statusquestion
-        image_url: "",
+        image: "",
       },
     };
   },

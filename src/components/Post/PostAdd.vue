@@ -19,18 +19,16 @@
           <div class="grid gap-6 mb-6 md:grid-cols-4">
             <div class="col-span-2">
               <label
-                for="text"
+                for="image"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >image</label
+                >Image</label
               >
               <input
-                v-model="formData.image"
-                type="imge"
-                name="image"
-                id="image"
+                type="file"
+                accept="image/*"
+                @change="handleImageUpload"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
+                required
               />
             </div>
           </div>
@@ -206,7 +204,7 @@ export default {
     return {
       isOpen: false,
       formData: {
-        image: "",
+        image: null, // เปลี่ยนจาก "" เป็น null เพื่อให้เป็น URL ของรูปภาพ
         Company: "",
         Header: "",
         Description: "",
@@ -220,6 +218,29 @@ export default {
     };
   },
   methods: {
+    async handleImageUpload(event) {
+      const formData = new FormData();
+      formData.append("image", this.selectedFile);
+
+      try {
+        // Upload the file using Axios
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_POST}/post/insert-post`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        // Handle the response...
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        Swal.fire("Error!", "Failed to upload file", "error");
+      }
+    },
     async addPost() {
       // ตรวจสอบว่ามีข้อมูลใดๆ ที่ยังไม่ถูกกรอกหรือไม่
       for (const key in this.formData) {
@@ -241,7 +262,6 @@ export default {
         if (result.isConfirmed) {
           // เรียกใช้งาน addPostRequest หลังจากผู้ใช้ยืนยันการเพิ่มข้อมูล
           this.addPostRequest();
-          window.location.reload(); // รีโหลดหน้า
         }
       });
     },

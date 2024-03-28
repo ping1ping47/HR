@@ -1,193 +1,148 @@
 <template>
   <div class="popup-overlay flex justify-center items-center">
     <div class="popup-content justify-center bg-gray-900 p-8 rounded-lg mt-10">
-      <div class="grid gap-6 md:grid-cols-2">
-        <!-- Modal header -->
-        <div class="p-4 border-b rounded-t md:col-span-2">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            ข้อมูลข้อสอบ
-          </h3>
-          <!-- Close button -->
-          <button @click.prevent="ModalClose" class="text-white text-5xl">
-            &times;
-          </button>
-        </div>
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+          ข้อมูลประกาศสมัครงาน
+        </h3>
+        <!-- Close button -->
+        <button @click.prevent="ModalClose" class="text-white text-5xl">
+          &times;
+        </button>
+      </div>
 
-        <!-- Exam ID and Exam Type ID -->
-        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="border p-2 rounded-md">
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Exam ID
-            </label>
-            <p class="text-gray-900 dark:text-white">{{ formData.exam_id }}</p>
-          </div>
-          <div class="border p-2 rounded-md">
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Exam Type ID
-            </label>
-            <p class="text-gray-900 dark:text-white">
-              {{ formData.extype_id }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Image -->
-        <div class="md:col-span-2">
+      <div class="gap-6 mb-6 md:grid-cols-4 flex justify-center">
+        <div class="col-span-2">
           <label
             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Image</label
           >
-            รูป
-          </label>
-          <div class="border p-2 rounded-md">
-            <img
-              :src="formData.image_url"
-              alt="Image"
-              class="max-w-full h-auto"
-            />
-          </div>
-        </div>
-
-        <!-- Questions -->
-        <div class="md:col-span-2">
-          <label
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            เนื้อหา
-          </label>
-          <div class="grid gap-4 grid-cols-1 md:grid-cols-3">
-            <div
-              v-for="(question, index) in [1, 2, 3]"
-              :key="index"
-              class="border p-2 rounded-md"
-            >
-              <label
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                เนื้อหา {{ question }}
-              </label>
-              <p class="text-gray-900 dark:text-white">
-                {{ formData["question_" + question] }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Choices and Points -->
-        <div class="md:col-span-2">
-          <label
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            คำตอบ
-          </label>
-          <div class="md:col-span-2 grid grid-cols-2 gap-6">
-            <div
-              v-for="(choice, index) in [1, 2, 3, 4]"
-              :key="index"
-              class="border p-2 rounded-md"
-            >
-              <label class="block font-medium text-gray-900 dark:text-white"
-                >ข้อ {{ choice }}</label
-              >
-              <p class="text-gray-900 dark:text-white">คำตอบ
-                {{ formData["c" + choice] }}
-              </p>
-              <p class="text-gray-900 dark:text-white">
-                {{ formData["c" + choice + "_point"] }} คะแนน
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Correct Answer -->
-        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="border p-2 rounded-md">
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              คำตอบที่ถูก
-            </label>
-            <p class="text-gray-900 dark:text-white">
-              {{ formData.cr_answer }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Employee ID and Status -->
-        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="border p-2 rounded-md">
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Employee ID
-            </label>
-            <p class="text-gray-900 dark:text-white">{{ formData.em_id }}</p>
-          </div>
-          <div class="border p-2 rounded-md">
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Status
-            </label>
-            <p class="text-gray-900 dark:text-white">
-              {{ formData.statusquestion }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Close buttons -->
-        <div class="md:col-span-2 p-3 mt-2 text-center">
-          <button
-            @click.prevent="ModalClose"
-            class="mb-2 bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
-          >
-            Close
-          </button>
+          <img
+            :src="formData.image"
+            alt="Job Image"
+            class="w-full h-auto rounded-lg"
+          />
         </div>
       </div>
-      <!-- เช่น ข้อความ รูปภาพ หรือ Component อื่นๆ -->
-      <slot></slot>
+
+      <div class="grid gap-6 mb-6 md:grid-cols-4">
+        <div class="col-span-2">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Company</label
+          >
+          <input
+            :value="formData.Company"
+            type="text"
+            readonly
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+          />
+        </div>
+
+        <div class="col-span-2">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Header</label
+          >
+          <input
+            :value="formData.Header"
+            type="text"
+            readonly
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+          />
+        </div>
+
+        <div class="col-span-4 items-center">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Description
+          </label>
+          <p
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+          >
+            {{ formData.Description }}
+          </p>
+        </div>
+
+        <div class="col-span-2">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Department</label
+          >
+          <input
+            :value="formData.department"
+            type="text"
+            readonly
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+          />
+        </div>
+
+        <div class="col-span-2">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Salary</label
+          >
+          <input
+            :value="formData.salary"
+            type="text"
+            readonly
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+          />
+        </div>
+
+        <div class="col-span-2">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Sex</label
+          >
+          <input
+            :value="formData.sex === 'M' ? 'ชาย' : 'หญิง'"
+            type="text"
+            readonly
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+          />
+        </div>
+
+        <div class="col-span-2">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >สถานะ</label
+          >
+          <input
+            :value="formData.Post_status === '1' ? 'เปิด' : 'ปิด'"
+            type="text"
+            readonly
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+          />
+        </div>
+      </div>
+      <div class="p-3 mt-2 text-center space-x-4 md:block">
+        <button
+          @click.prevent="ModalClose"
+          class="mb-2 md:mb-0 bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
+        >
+          Close
+        </button>
+      </div>
     </div>
   </div>
 </template>
-  
-<script>
-import Swal from "sweetalert2";
 
+<script>
 export default {
-  name: "ShowPopup",
+  name: "ViewPopup",
   props: {
-    exam: Object, // รับข้อมูลข้อสอบที่จะแสดง
+    post: Object, // รับข้อมูลข้อสอบที่จะแสดง
   },
   data() {
     return {
-      formData: {
-        exam_id: "",
-        extype_id: "",
-        question_1: "",
-        question_2: "",
-        question_3: "",
-        c1: "",
-        c1_point: "",
-        c2: "",
-        c2_point: "",
-        c3: "",
-        c3_point: "",
-        c4: "",
-        c4_point: "",
-        cr_answer: "",
-        em_id: "",
-        statusquestion: "", // Default value for statusquestion
-        image_url: "",
-      },
+      formData: {},
     };
   },
   created() {
-    // นำข้อมูลข้อสอบที่ได้รับมาใส่ใน formData
-    this.formData = { ...this.exam };
+    // เมื่อคอมโพเนนต์ถูกสร้างขึ้น ให้กำหนดค่าข้อมูลที่จะแสดงในฟอร์ม
+    this.formData = { ...this.post };
   },
   methods: {
     ModalClose() {
@@ -196,7 +151,7 @@ export default {
   },
 };
 </script>
-  
+
 <style scoped>
 .popup-overlay {
   position: fixed;
@@ -204,18 +159,18 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* เพิ่ม opacity */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* ตั้งค่า z-index เพื่อให้ป๊อปอัพอยู่ด้านบน */
 }
 
 .popup-content {
-  border-radius: 0.5rem;
-  padding: 1rem;
-  max-width: 90%;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 50%;
+  width: 100%;
   max-height: 90%;
-  overflow: auto;
+  overflow-y: auto;
 }
 </style>

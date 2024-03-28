@@ -3,7 +3,7 @@
     class="w-screen container rounded-2xl bg-black flex flex-col dark:bg-slate-900/70"
   >
     <div class="flex justify-center">
-      <Graph />
+      <Calendar />
     </div>
 
     <div class="flex-1 md:px-1 md:py-2">
@@ -14,7 +14,7 @@
             v-model="searchText"
             placeholder="ค้นหาตำแหน่งงาน..."
             class="px-3 py-1 border border-gray-300 rounded-md bg-black text-white h-10"
-            @input="searchJobByPosition"
+            @input="searchResultsByExam"
           />
         </div>
 
@@ -41,50 +41,33 @@
           >
             เพิ่มข้อสอบ
           </button>
-          <Add v-if="AddPopup" :post="AddPopup" @close="AddPopup = false" />
+          <Add v-if="AddPopup" :result="AddPopup" @close="AddPopup = false" />
         </div>
       </div>
 
       <h1
-        class="my-4 text-3xl text-start font-medium tracking-wider text-purple-700 flex justify-center"
+        class="my-4 text-3xl text-center font-medium tracking-wider text-purple-700"
       >
         ข้อมูลการประกาศงาน
       </h1>
 
-      <table class="w-30 mt-6">
+      <table class="w-24 mt-6">
         <thead>
           <tr>
             <th class="border border-gray-300 text-center px-2 py-2">ลำดับ</th>
             <th class="border border-gray-300 text-center px-2 py-2">รูป</th>
             <th class="border border-gray-300 text-center px-2 py-2 th-shorten">
-              บริษัท
+              ผลสอบ
             </th>
             <th class="border border-gray-300 text-center px-2 py-2 th-shorten">
-              หัวข้อ
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2 th-shorten">
-              ตำแหน่ง
+              คะแนน
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              เงินเดือน
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">เพศ</th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              วันที่ประกาศ
+              วันที่สอบ
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              วันที่เปิดรับ
+              วันที่ประกาศผล
             </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              วันที่แก้ไข
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              จำนวนผู้ชม
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              จำนวนผู้สมัคร
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">สถานะ</th>
             <th class="border border-gray-300 text-center px-2 py-2">
               Actions
             </th>
@@ -92,58 +75,38 @@
         </thead>
         <tbody>
           <tr
-            v-for="(post, index) in posts"
-            :key="post._id"
+            v-for="(result, index) in results"
+            :key="result._id"
             class="border-b border-gray-200 hover:bg-gray-50 dark:hover:bg-slate-800"
           >
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center table-cell">
               {{ index + 1 }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
+            <td class="py-4 border border-gray-300 text-center table-cell">
               <img
-                :src="post.image"
-                alt="Job Image"
+                :src="result.image"
+                alt="Result Image"
                 class="w-10 h-10 rounded-full"
               />
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              <span v-if="post.Company.length <= 24">{{ post.Company }}</span>
-              <span v-else>{{ post.Company.slice(0, 21) }}... </span>
+            <td class="py-4 border border-gray-300 text-center table-cell">
+              <span v-if="result.exam.length <= 24">{{ result.exam }}</span>
+              <span v-else>{{ result.exam.slice(0, 21) }}... </span>
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              <span v-if="post.Header.length <= 24">{{ post.Header }}</span>
-              <span v-else>{{ post.Header.slice(0, 21) }}... </span>
+            <td class="py-4 border border-gray-300 text-center table-cell">
+              {{ result.score }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.department }}
+            <td class="py-4 border border-gray-300 text-center table-cell">
+              {{ result.exam_date }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.salary }}
+            <td class="py-4 border border-gray-300 text-center table-cell">
+              {{ result.result_date }}
             </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.sex }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.post_date }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.post_date }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.Update_date }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.views }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.applicants }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ post.Post_status }}
-            </td>
-            <td class="py-2 border border-gray-300 space-x-2 table-cell">
+            <td
+              class="py-2 border border-gray-300 text-center space-x-2 table-cell"
+            >
               <button
-                @click="openDetailsPopup(post)"
+                @click="openDetailsPopup(result)"
                 class="btn-details bg-blue-500 hover:bg-blue-600"
               >
                 <svg
@@ -165,11 +128,11 @@
               </button>
               <View
                 v-if="ShowPopup"
-                :post="selectedPost"
+                :result="selectedResult"
                 @close="ShowPopup = false"
               />
               <button
-                @click="openEditModal(post)"
+                @click="openEditModal(result)"
                 class="btn-edit bg-yellow-500 hover:bg-yellow-600"
               >
                 <svg
@@ -203,17 +166,18 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M9 12h13"
+                    d="M9 12h
+                      13"
                   />
                 </svg>
               </button>
               <Edit
                 v-if="EditPopup"
-                :post="PostToEdit"
+                :result="ResultToEdit"
                 @close="EditPopup = false"
               />
               <button
-                @click="deletef(post)"
+                @click="deleteResult(result)"
                 class="btn-delete bg-red-500 hover:bg-red-600"
               >
                 <svg
@@ -241,7 +205,7 @@
       <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
         <div class="justify-between items-center block md:flex">
           <div class="flex items-center justify-center">
-            <small>หน้า 1 จาก {{ posts.length }}</small>
+            <small>หน้า 1 จาก {{ results.length }}</small>
           </div>
         </div>
       </div>
@@ -253,39 +217,32 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Add from "./PostAdd.vue";
-import Edit from "./PostEdit.vue";
-import View from "./PostView.vue";
-import Graph from "./Graph.vue";
+import Calendar from "./Calendar.vue";
 
 export default {
   components: {
-    Add,
-    Edit,
-    View,
-    Graph,
+    Calendar,
   },
-
   setup() {
-    const posts = ref([]);
+    const results = ref([]);
     const searchText = ref("");
     const ShowPopup = ref(false);
     const AddPopup = ref(false);
     const EditPopup = ref(false);
-    const PostToEdit = ref(null);
-    const selectedPost = ref(null);
+    const ResultToEdit = ref(null);
+    const selectedResult = ref(null);
 
-    const fetchPosts = async () => {
+    const fetchResults = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_POST}/post`
+          `${import.meta.env.VITE_API_RESULTS}/results`
         );
         if (
           response.status === 200 &&
           response.data &&
           Array.isArray(response.data.data)
         ) {
-          posts.value = response.data.data;
+          results.value = response.data.data;
         } else {
           console.error(
             "Invalid response format or empty data array:",
@@ -293,23 +250,22 @@ export default {
           );
         }
       } catch (error) {
-        console.error("Error fetching posts:", error);
-        // Set posts to an empty array in case of error
-        posts.value = [];
+        console.error("Error fetching results:", error);
+        // Set results to an empty array in case of error
+        results.value = [];
       }
-      console.log(posts.value); // Corrected this line
     };
 
     onMounted(async () => {
-      await fetchPosts(); // Corrected this line
+      await fetchResults();
     });
 
     const togglePopup = () => {
       AddPopup.value = !AddPopup.value;
     };
 
-    const openEditModal = (post) => {
-      PostToEdit.value = post;
+    const openEditModal = (result) => {
+      ResultToEdit.value = result;
       EditPopup.value = true;
     };
 
@@ -317,7 +273,7 @@ export default {
       ShowPopup.value = false;
     };
 
-    const deletef = async (post) => {
+    const deletef = async (result) => {
       Swal.fire({
         title: "ยืนยันการลบ",
         text: "คุณแน่ใจหรือไม่ที่จะลบข้อมูล?",
@@ -329,55 +285,57 @@ export default {
         cancelButtonText: "ยกเลิก",
       }).then((result) => {
         if (result.isConfirmed) {
-          deletePost(post);
+          deleteResult(result);
         }
       });
     };
 
-    const deletePost = async (post) => {
+    const deleteResult = async (result) => {
       try {
         await axios.delete(
-          `${import.meta.env.VITE_API_POST}/post/delete-post/${post._id}`
+          `${import.meta.env.VITE_API_RESULTS}/results/delete-result/${
+            result._id
+          }`
         );
         Swal.fire("ลบแล้ว!", "ข้อมูลถูกลบออกสำเร็จ", "success");
-        posts.value = posts.value.filter((item) => item._id !== post._id);
+        results.value = results.value.filter((item) => item._id !== result._id);
       } catch (error) {
         console.error("Error deleting data:", error);
         Swal.fire("เกิดข้อผิดพลาด!", "ไม่สามารถลบข้อมูลได้", "error");
       }
     };
 
-    const searchPostById = () => {
+    const searchResultsByExam = () => {
       if (searchText.value.trim()) {
-        const filteredPosts = posts.value.filter((post) =>
-          post.id.includes(searchText.value)
+        const filteredResults = results.value.filter((result) =>
+          result.exam.includes(searchText.value)
         );
-        posts.value = filteredPosts;
+        results.value = filteredResults;
       } else {
-        fetchPosts();
+        fetchResults();
       }
     };
 
-    const openDetailsPopup = (post) => {
-      selectedPost.value = post;
+    const openDetailsPopup = (result) => {
+      selectedResult.value = result;
       ShowPopup.value = true;
     };
 
     return {
-      posts,
+      results,
       searchText,
       ShowPopup,
       AddPopup,
       EditPopup,
-      PostToEdit,
-      selectedPost,
-      fetchPosts,
+      ResultToEdit,
+      selectedResult,
+      fetchResults,
       togglePopup,
       openEditModal,
       handleClose,
       deletef,
-      deletePost,
-      searchPostById,
+      deleteResult,
+      searchResultsByExam,
       openDetailsPopup,
     };
   },
