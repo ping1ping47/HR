@@ -1,13 +1,7 @@
 <script setup>
-import SildBar from './components/NavBar/SildBar.vue';
+import MainLayout from "./components/NavBar/MainLayout.vue";
 </script>
 
 <template>
-
-  <SildBar />
-  <div>
-    <main>
-      <!-- <RouterView /> -->
-    </main>
-  </div>
+  <MainLayout />
 </template>

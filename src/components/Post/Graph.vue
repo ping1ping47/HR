@@ -3,15 +3,21 @@
     <div class="flex justify-center mt-8">
       <div class="w-1/2 mx-2">
         <h2 class="text-center">
-          กราฟจำนวนครั้งที่เข้าชม ({{ selectedSumviewsChart }})
+          กราฟจำนวนครั้งที่เข้าชม ({{
+            selectedSumviewsChart === null ? totalViews : selectedSumviewsChart
+          }})
         </h2>
-        <canvas ref="viewsChartCanvas" width="400" height="400"></canvas>
+        <canvas id="viewsChart" width="400" height="400"></canvas>
       </div>
       <div class="w-1/2 mx-2">
         <h2 class="text-center">
-          กราฟจำนวนผู้สมัคร ({{ selectedSumapplicantsChart }})
+          กราฟจำนวนผู้สมัคร ({{
+            selectedSumapplicantsChart === null
+              ? totalApplicants
+              : selectedSumapplicantsChart
+          }})
         </h2>
-        <canvas ref="applicantsChartCanvas" width="400" height="400"></canvas>
+        <canvas id="applicantsChart" width="400" height="400"></canvas>
       </div>
     </div>
   </div>
@@ -29,10 +35,14 @@ export default {
       selectedSumapplicantsChart: null,
       viewsChartInstance: null,
       applicantsChartInstance: null,
+      totalViews: 0,
+      totalApplicants: 0,
     };
   },
   mounted() {
-    this.renderCharts();
+    this.$nextTick(() => {
+      this.renderCharts();
+    });
   },
   methods: {
     async clearCharts() {
@@ -52,35 +62,38 @@ export default {
         );
         const posts = response.data.data;
 
-        // Render views chart
-        const viewsCtx = this.$refs.viewsChartCanvas.getContext("2d");
+        this.totalViews = posts.reduce((sum, post) => sum + post.views, 0);
+        this.totalApplicants = posts.reduce(
+          (sum, post) => sum + post.applicants,
+          0
+        );
+
+        const viewsCtx = document.getElementById("viewsChart").getContext("2d");
         this.viewsChartInstance = new Chart(viewsCtx, {
           type: "bar",
           data: {
-            labels: posts.map((post) => {
-              const postDate = new Date(post.post_date);
-              const monthNames = [
-                "มกราคม",
-                "กุมภาพันธ์",
-                "มีนาคม",
-                "เมษายน",
-                "พฤษภาคม",
-                "มิถุนายน",
-                "กรกฎาคม",
-                "สิงหาคม",
-                "กันยายน",
-                "ตุลาคม",
-                "พฤศจิกายน",
-                "ธันวาคม",
-              ];
-              return monthNames[postDate.getMonth()];
-            }),
+            labels: [
+              "Total Views",
+              ...posts.map((post) => {
+                const postDate = new Date(post.post_date);
+                return `${post.Company} - ${postDate.toLocaleString("en-US", {
+                  month: "long",
+                })}`;
+              }),
+            ],
             datasets: [
               {
-                label: `จำนวน${this.selectedSumviewsChart}`,
-                data: posts
-                  .filter((post) => post.views > 0)
-                  .map((post) => post.views),
+                label: `จำนวน${
+                  this.selectedSumviewsChart === null
+                    ? "ผลรวมจำนวนครั้งที่เข้าชม" 
+                    : this.selectedSumviewsChart
+                }`,
+                data: [
+                  this.totalViews,
+                  ...posts
+                    .filter((post) => post.views > 0)
+                    .map((post) => post.views),
+                ],
                 backgroundColor: "rgba(255, 99, 132, 0.2)",
                 borderColor: "rgba(255, 99, 132, 1)",
                 borderWidth: 1,
@@ -95,7 +108,7 @@ export default {
               x: {
                 title: {
                   display: true,
-                  text: "เดือน",
+                  text: "Month",
                 },
               },
             },
@@ -111,35 +124,34 @@ export default {
           },
         });
 
-        // Render applicants chart
-        const applicantsCtx = this.$refs.applicantsChartCanvas.getContext("2d");
+        const applicantsCtx = document
+          .getElementById("applicantsChart")
+          .getContext("2d");
         this.applicantsChartInstance = new Chart(applicantsCtx, {
           type: "bar",
           data: {
-            labels: posts.map((post) => {
-              const postDate = new Date(post.post_date);
-              const monthNames = [
-                "มกราคม",
-                "กุมภาพันธ์",
-                "มีนาคม",
-                "เมษายน",
-                "พฤษภาคม",
-                "มิถุนายน",
-                "กรกฎาคม",
-                "สิงหาคม",
-                "กันยายน",
-                "ตุลาคม",
-                "พฤศจิกายน",
-                "ธันวาคม",
-              ];
-              return monthNames[postDate.getMonth()];
-            }),
+            labels: [
+              "Total Applicants",
+              ...posts.map((post) => {
+                const postDate = new Date(post.post_date);
+                return `${post.Company} - ${postDate.toLocaleString("en-US", {
+                  month: "long",
+                })}`;
+              }),
+            ],
             datasets: [
               {
-                label: `จำนวน${this.selectedSumapplicantsChart}`,
-                data: posts
-                  .filter((post) => post.applicants > 0)
-                  .map((post) => post.applicants),
+                label: `จำนวน${
+                  this.selectedSumapplicantsChart === null
+                    ? "ผลรวมจำนวนผู้สมัคร"
+                    : this.selectedSumapplicantsChart
+                }`,
+                data: [
+                  this.totalApplicants,
+                  ...posts
+                    .filter((post) => post.applicants > 0)
+                    .map((post) => post.applicants),
+                ],
                 backgroundColor: "rgba(54, 162, 235, 0.2)",
                 borderColor: "rgba(54, 162, 235, 1)",
                 borderWidth: 1,
@@ -154,7 +166,7 @@ export default {
               x: {
                 title: {
                   display: true,
-                  text: "เดือน",
+                  text: "Month",
                 },
               },
             },
@@ -183,27 +195,53 @@ export default {
         }
         const response = await axios.get(apiUrl);
         const posts = response.data.data;
-        this.applicantsChartInstance.data.labels = posts.map((post) => {
-          const postDate = new Date(post.post_date);
-          const monthNames = [
-            "มกราคม",
-            "กุมภาพันธ์",
-            "มีนาคม",
-            "เมษายน",
-            "พฤษภาคม",
-            "มิถุนายน",
-            "กรกฎาคม",
-            "สิงหาคม",
-            "กันยายน",
-            "ตุลาคม",
-            "พฤศจิกายน",
-            "ธันวาคม",
-          ];
-          return monthNames[postDate.getMonth()];
-        });
-        this.applicantsChartInstance.data.datasets[0].data = posts
-          .filter((post) => post.applicants > 0)
-          .map((post) => post.applicants);
+
+        this.totalViews = posts.reduce((sum, post) => sum + post.views, 0);
+        this.totalApplicants = posts.reduce(
+          (sum, post) => sum + post.applicants,
+          0
+        );
+
+        this.viewsChartInstance.data.labels = [
+          "Total Views",
+          ...posts.map((post) => {
+            const postDate = new Date(post.post_date);
+            return `${post.Company} - ${postDate.toLocaleString("en-US", {
+              month: "long",
+            })}`;
+          }),
+        ];
+        this.viewsChartInstance.data.datasets[0].data = [
+          this.totalViews,
+          ...posts.filter((post) => post.views > 0).map((post) => post.views),
+        ];
+        this.viewsChartInstance.data.datasets[0].label = `จำนวน${
+          this.selectedSumviewsChart === null
+            ? "ผลรวมจำนวนครั้งที่เข้าชม"
+            : this.selectedSumviewsChart
+        }`;
+        this.viewsChartInstance.update();
+
+        this.applicantsChartInstance.data.labels = [
+          "Total Applicants",
+          ...posts.map((post) => {
+            const postDate = new Date(post.post_date);
+            return `${post.Company} - ${postDate.toLocaleString("en-US", {
+              month: "long",
+            })}`;
+          }),
+        ];
+        this.applicantsChartInstance.data.datasets[0].data = [
+          this.totalApplicants,
+          ...posts
+            .filter((post) => post.applicants > 0)
+            .map((post) => post.applicants),
+        ];
+        this.applicantsChartInstance.data.datasets[0].label = `จำนวน${
+          this.selectedSumapplicantsChart === null
+            ? "ผลรวมจำนวนผู้สมัคร"
+            : this.selectedSumapplicantsChart
+        }`;
         this.applicantsChartInstance.update();
       } catch (error) {
         console.error("Error fetching data:", error);

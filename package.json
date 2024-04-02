@@ -9,10 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@daypilot/daypilot-lite-vue": "^3.21.0",
+    "@syncfusion/ej2-data": "^25.1.35",
+    "@syncfusion/ej2-vue-schedule": "^25.1.37",
     "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "daypilot-pro-vue": "^0.0.0",
     "googleapis": "^134.0.0",
     "qalendar": "^3.8.1",
     "sweetalert2": "^11.10.7",

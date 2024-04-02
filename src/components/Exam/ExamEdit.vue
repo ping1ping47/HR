@@ -35,22 +35,28 @@
               />
             </div>
 
+            <!-- extype_id to display extype_name -->
             <div class="col-span-2">
               <label
                 for="extype_id"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >extype_id</label
+                >ประเภทข้อสอบ</label
               >
-              <input
+              <select
                 v-model="formData.extype_id"
-                type="text"
-                name="extype_id"
-                id="extype_id"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-                @input="validateNumber"
-              />
+                required
+              >
+                <option value="">เลือกประเภทข้อสอบ</option>
+                <option
+                  v-for="type in ExamType"
+                  :key="type._id"
+                  :value="type.extype_id"
+                >
+                  {{ type.extype_name }}
+                  <!-- แสดง extype_name แทน extype_id -->
+                </option>
+              </select>
             </div>
 
             <div class="flex">
@@ -259,22 +265,27 @@
               />
             </div>
 
+            <!-- em_id to display em_firstname && em_lastname -->
             <div class="col-span-2">
               <label
                 for="em_id"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >em_id</label
+                >พนักงาน</label
               >
-              <input
+              <select
                 v-model="formData.em_id"
-                type="text"
-                name="em_id"
-                id="em_id"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-                @input="formData.em_id = validateNumber($event.target.value)"
-              />
+                required
+              >
+                <option value="">เลือกพนักงาน</option>
+                <option
+                  v-for="employee in Employees"
+                  :key="employee._id"
+                  :value="employee.em_id"
+                >
+                  {{ employee.em_firstname }} {{ employee.em_lastname }}
+                </option>
+              </select>
             </div>
 
             <div class="col-span-2 sm:col-span-1">
@@ -293,18 +304,29 @@
               </select>
             </div>
 
-            <label
-              for="image"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Image</label
-            >
-            <input
-              type="file"
-              accept="image/*"
-              @change="handleImageUpload"
-              class="block w-full p-2.5"
-            />
+            <div class="col-span-2">
+              <label
+                for="image"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >รูปภาพ 150KB</label
+              >
+              <input
+                type="file"
+                accept="image/*"
+                ref="fileInput"
+                @change="handleImageUpload"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              />
+              <!-- Show uploaded image -->
+              <img
+                v-if="imagePreview"
+                :src="imagePreview"
+                alt="Uploaded Image"
+                class="mt-2 max-w-full h-auto"
+              />
+            </div>
           </div>
+
           <div class="p-3 mt-2 text-center space-x-4 md:block">
             <!-- Save and Close buttons -->
             <button
@@ -333,7 +355,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 export default {
-  name: "AddPopup",
+  name: "EditPopup",
   props: {
     exam: Object, // รับข้อมูลข้อสอบที่จะแก้ไข
   },
@@ -359,49 +381,58 @@ export default {
         statusquestion: "", // Default value for statusquestion
         image: "",
       },
+      imagePreview: null,
+      ExamType: [], // Array to store exam types
+      Employees: [], // Array to store exam types
     };
   },
   created() {
     // นำข้อมูลข้อสอบที่ได้รับมาแสดงในฟอร์มเมื่อคอมโพเนนต์ถูกสร้างขึ้น
     this.formData = { ...this.exam };
   },
+
+  mounted() {
+    this.fetchExamTypes(); // Fetch exam types when component mounts
+    this.fetchEmployees(); // Fetch exam types when component mounts
+  },
+
   methods: {
-    handleImageUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      // Convert the image file to a base64 string
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.formData.image = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    handleImageUpload() {
+      const file = this.$refs.fileInput.files[0];
+      this.formData.image = file;
+      this.imagePreview = URL.createObjectURL(file);
     },
-    async addExam() {
-      // ตรวจสอบว่ามีข้อมูลใดๆ ที่ยังไม่ถูกกรอกหรือไม่
-      for (const key in this.formData) {
-        if (this.formData[key] === "") {
-          Swal.fire("Error!", "Please fill in all fields", "error");
-          return; // หยุดการทำงานของฟังก์ชันถ้ามีข้อมูลที่ยังไม่ถูกกรอก
-        }
-      }
 
-      // แสดงข้อความยืนยัน
-      Swal.fire({
-        title: "Confirm Update",
-        text: "Are you sure you want to update?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Confirm",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // เรียกใช้งาน updateExamRequest หลังจากผู้ใช้ยืนยันการแก้ไขข้อมูล
-          this.updateExamRequest();
+    async fetchExamTypes() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_EXAM}/exam-type`
+        );
+        if (response.data.status) {
+          // ตรวจสอบ status ใน JSON response
+          this.ExamType = response.data.data; // แสดงค่าจาก key "data"
+        } else {
+          console.error("Error fetching exam types:", response.data.message);
         }
-      });
+      } catch (error) {
+        console.error("Error fetching exam types:", error);
+      }
+    },
+
+    async fetchEmployees() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_EXAM}/employees`
+        );
+        if (response.data.status) {
+          // ตรวจสอบ status ใน JSON response
+          this.Employees = response.data.data; // แสดงค่าจาก key "data"
+        } else {
+          console.error("Error fetching exam types:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching exam types:", error);
+      }
     },
 
     async updateExamRequest() {
@@ -464,7 +495,6 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(0, 0, 0);
   display: flex;
   justify-content: center;
   align-items: center;

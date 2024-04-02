@@ -1,39 +1,44 @@
 <template>
-  <div
-    class="w-screen container rounded-2xl bg-black flex flex-col dark:bg-slate-900/70"
-  >
+  <div class="max-w-screen-lg mx-auto">
     <div class="flex-1 md:px-1 md:py-2">
-      <div class="flex">
-        <div class="p-3 flex">
+      <h1
+        class="my-4 text-3xl flex justify-center font-medium tracking-wider text-purple-700"
+      >
+        ข้อมูลข้อสอบ
+      </h1>
+      <div class="flex justify-center items-center space-x-3">
+        <div class="flex items-center">
           <input
             type="text"
             v-model="searchText"
-            placeholder="ค้นหาตำแหน่งงาน..."
-            class="px-3 py-1 border border-gray-300 rounded-md bg-black text-white h-10"
+            placeholder="ค้นหาหมายเลขข้อสอบ	..."
+            class="px-3 py-1 border border-gray-300 rounded-md h-10"
             @input="searchExamById"
           />
         </div>
-
-        <div class="p-3 flex">
-          <label
-            for="status"
-            class="p-2 text-sm font-medium text-gray-900 dark:text-white"
-            >เลือกสถานะ</label
-          >
+        <!-- **************************************************** -->
+        <div class="flex items-center">
+          <div class="text-sm font-medium">เลือกตำแน่งข้อสอบ: {{}}</div>
           <select
-            id="status"
-            class="ml-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            class="ml-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            v-model="selectedExamType"
+            @change="fetchExams"
           >
-            <option value="ALL">ทั้งหมด</option>
-            <option value="ON">เปิด</option>
-            <option value="OFF">ปิด</option>
+            <option value="0">แสดงทั้งหมด</option>
+            <option
+              v-for="type in examTypes"
+              :key="type.extype_id"
+              :value="type.extype_id"
+            >
+              {{ type.extype_name }}
+            </option>
           </select>
         </div>
 
-        <div class="p-3 flex">
+        <div>
           <button
-            @click="AddPopup = true"
-            class="bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
+            @click="togglePopup"
+            class="btn-add bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
           >
             เพิ่มข้อสอบ
           </button>
@@ -41,72 +46,33 @@
         </div>
       </div>
 
-      <h1
-        class="my-4 text-3xl flex justify-center font-medium tracking-wider text-purple-700"
-      >
-        ข้อมูลข้อสอบ
-      </h1>
-
-      <table class="w-30 mt-6">
+      <table>
         <thead>
           <tr>
             <th class="border border-gray-300 text-center px-2 py-2">ลำดับ</th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              Exam ID
+              หมายเลขข้อสอบ
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              Extape ID
+              ประเภทข้อสอบ
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              Question 1
+              รายละเอียด 1
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              Question 2
+              คำตอบที่ถูก
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              Question 3
+              พนักงาน
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              Choice 1
+              สถานะข้อสอบ
             </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Choice 1 Point
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Choice 2
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Choice 2 Point
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Choice 3
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Choice 3 Point
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Choice 4
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Correct Answer
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Exam Mode ID
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Status Question
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Actions
-            </th>
+            <th class="border border-gray-300 text-center px-2 py-2">จัดการ</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(exam, index) in exams"
-            :key="exam._id"
-            class="border-b border-gray-200 hover:bg-gray-50 dark:hover:bg-slate-800"
-          >
+          <tr v-for="(exam, index) in paginatedExams" :key="index">
             <td class="py-4 border border-gray-300 table-cell">
               {{ index + 1 }}
             </td>
@@ -117,43 +83,12 @@
               {{ exam.extype_id }}
             </td>
             <td class="py-4 border border-gray-300 table-cell">
-              <span v-if="exam.question_1.length <= 24">{{
-                exam.question_1
+              <span v-if="exam.question_1 && exam.question_1.length <= 24">{{
+                exam.question_1.length
               }}</span>
-              <span v-else>{{ exam.question_1.slice(0, 21) }}... </span>
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              <span v-if="exam.question_2.length <= 24">{{
-                exam.question_2
+              <span v-else>{{
+                exam.question_1 ? exam.question_1.slice(0, 21) + "..." : ""
               }}</span>
-              <span v-else>{{ exam.question_2.slice(0, 21) }}... </span>
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              <span v-if="exam.question_3.length <= 24">{{
-                exam.question_3
-              }}</span>
-              <span v-else>{{ exam.question_3.slice(0, 21) }}... </span>
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ exam.c1 }}
-            </td>
-            <td class="py-4 border border-gray-300table-cell">
-              {{ exam.c1_point }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ exam.c2 }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ exam.c2_point }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ exam.c3 }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ exam.c3_point }}
-            </td>
-            <td class="py-4 border border-gray-300 table-cell">
-              {{ exam.c4 }}
             </td>
             <td class="py-4 border border-gray-300 table-cell">
               {{ exam.cr_answer }}
@@ -186,6 +121,7 @@
                   />
                 </svg>
               </button>
+
               <View
                 v-if="ShowPopup"
                 :exam="selectedExam"
@@ -261,12 +197,48 @@
         </tbody>
       </table>
 
-      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
-        <div class="justify-between items-center block md:flex">
-          <div class="flex items-center justify-center">
-            <small>หน้า 1 จาก {{ exams.length }}</small>
-          </div>
+      <!-- Pagination -->
+      <div class="flex justify-center items-center mt-4 space-x-4">
+        <!-- Showing X to Y of Z -->
+        <div class="text-sm text-gray-600">
+          Showing {{ (currentPage - 1) * perPage + 1 }} to
+          {{ Math.min(currentPage * perPage, filteredExams.length) }} of
+          {{ filteredExams.length }}
         </div>
+
+        <!-- Previous Page Button -->
+        <button
+          v-if="currentPage > 1"
+          @click="currentPage--"
+          class="btn-pagination bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300"
+        >
+          &lt; Previous
+        </button>
+
+        <!-- Page Numbers -->
+        <div class="flex space-x-4">
+          <button
+            v-for="pageNumber in totalPages"
+            :key="pageNumber"
+            @click="currentPage = pageNumber"
+            :class="{
+              'bg-purple-500 text-white': pageNumber === currentPage,
+              'bg-gray-200': pageNumber !== currentPage,
+            }"
+            class="btn-pagination px-4 py-2 rounded-md hover:bg-purple-600 hover:text-white"
+          >
+            {{ pageNumber }}
+          </button>
+        </div>
+
+        <!-- Next Page Button -->
+        <button
+          v-if="currentPage < totalPages"
+          @click="currentPage++"
+          class="btn-pagination bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300"
+        >
+          Next &gt;
+        </button>
       </div>
     </div>
   </div>
@@ -285,9 +257,81 @@ export default {
     Add,
     Edit,
     View,
+
+    displayedItems() {
+      const start = (this.currentPage - 1) * this.perPage + 1;
+      const end = Math.min(
+        this.currentPage * this.perPage,
+        this.filteredExams.length
+      );
+      return `Showing ${start} to ${end} of ${this.filteredExams.length}`;
+    },
   },
+
+  data() {
+    return {
+      examTypes: [], // กำหนดค่าเริ่มต้นเป็นอาร์เรย์ว่าง
+      selectedExamType: "0",
+      selectedExamTypeName: "แสดงทั้งหมด",
+      exams: [],
+      perPage: 10, // จำนวนข้อมูลต่อหน้า
+      currentPage: 1, // หน้าปัจจุบัน
+    };
+  },
+
+  computed: {
+    filteredExams() {
+      if (this.selectedExamType === "0") {
+        return this.exams;
+      } else {
+        return this.exams.filter(
+          (exam) => exam.extype_id === this.selectedExamType
+        );
+      }
+    },
+
+    totalPages() {
+      return Math.ceil(this.filteredExams.length / this.perPage);
+    },
+
+    paginatedExams() {
+      const start = (this.currentPage - 1) * this.perPage;
+      const end = start + this.perPage;
+      return this.filteredExams.slice(start, end);
+    },
+  },
+  methods: {
+    fetchExamTypes() {
+      fetch(import.meta.env.VITE_API_EXAM + "/exam-type")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          this.examTypes = data.data;
+          this.fetchExams();
+        })
+        .catch((error) => {
+          console.error("Error fetching exam types:", error);
+        });
+    },
+    fetchExams() {
+      let url = import.meta.env.VITE_API_EXAM + "/exam";
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          this.exams = data.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching exams:", error);
+        });
+    },
+  },
+
+  mounted() {
+    this.fetchExamTypes();
+  },
+
   setup() {
-    // Define reactive variables
     const exams = ref([]);
     const originalExams = ref([]);
     const searchText = ref("");
@@ -296,8 +340,9 @@ export default {
     const EditPopup = ref(false);
     const ExamToEdit = ref(null);
     const selectedExam = ref(null);
+    const selectedExtTypeId = ref("ALL"); // Change here
+    const positions = ref([]); // Add this line
 
-    // Fetch exams data from API
     const fetchExams = async () => {
       try {
         const response = await axios.get(
@@ -309,7 +354,7 @@ export default {
           Array.isArray(response.data.data)
         ) {
           exams.value = response.data.data;
-          originalExams.value = response.data.data; // Store original data
+          originalExams.value = response.data.data;
         } else {
           console.error(
             "Invalid response format or empty data array:",
@@ -318,15 +363,14 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching exams:", error);
-        // Set exams to an empty array in case of error
         exams.value = [];
         originalExams.value = [];
       }
     };
 
-    // Call fetchExams when component is mounted
     onMounted(async () => {
       await fetchExams();
+      await fetchPositionById();
     });
 
     const togglePopup = () => {
@@ -382,7 +426,34 @@ export default {
         );
         exams.value = filteredExams;
       } else {
-        exams.value = [...originalExams.value]; // Reset to original data
+        exams.value = [...originalExams.value];
+      }
+    };
+
+    const fetchPositionById = async () => {
+      if (typeof selectedExtTypeId.value !== "undefined") {
+        // ตรวจสอบว่า selectedExtTypeId มีค่าหรือไม่
+        if (selectedExtTypeId.value !== "ALL") {
+          try {
+            const response = await axios.get(
+              `${import.meta.env.VITE_API_EXAM}/exam-type/${
+                selectedExtTypeId.value
+              }`
+            );
+            if (response.status === 200 && response.data) {
+              positions.value = response.data; // Set positions with the fetched data
+            } else {
+              console.error(
+                "Invalid response format or empty data:",
+                response.data
+              );
+            }
+          } catch (error) {
+            console.error("Error fetching exam-type:", error);
+          }
+        } else {
+          positions.value = []; // Reset positions if all positions are selected
+        }
       }
     };
 
@@ -399,6 +470,8 @@ export default {
       EditPopup,
       ExamToEdit,
       selectedExam,
+      selectedExtTypeId,
+      positions, // Add positions here
       fetchExams,
       togglePopup,
       openEditModal,
@@ -407,23 +480,8 @@ export default {
       deleteExam,
       searchExamById,
       openDetailsPopup,
+      fetchPositionById, // Add fetchPositionById here
     };
   },
 };
 </script>
-
-
-
-<style>
-/* Add this style block to your component */
-.table-cell {
-  padding: 10px; /* Adjust the padding as needed */
-}
-
-/* Add this style block to your component */
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-</style>

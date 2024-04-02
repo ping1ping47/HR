@@ -1,5 +1,5 @@
 <template>
-  <section class="p-6 xl:max-w-6xl xl:mx-auto">
+  <section class="p-6 xl:max-w-6xl xl:mx-auto h-screen">
     <section class="mb-6 flex items-center justify-between">
       <div class="flex items-center justify-start">
         <h1 class="text-3xl leading-tight" ref="dateDisplay">วว/ดด/ปป</h1>
@@ -8,18 +8,18 @@
 
     <!-- ************************************************************** -->
 
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-4 mb-6">
       <!-- Employee Stats -->
       <div
         v-for="(stat, index) in stats"
         :key="index"
-        class="rounded-2xl dark:bg-slate-900/70 bg-white flex flex-col justify-between"
+        class="rounded-2xl bg-white dark:bg-black/80 flex flex-col justify-between"
       >
         <div class="p-6">
           <div class="justify-between items-center flex">
             <div>
               <h3
-                class="text-lg leading-tight text-gray-500 dark:text-slate-400"
+                class="text-lg leading-tight text-gray-500 dark:text-gray-400"
               >
                 {{ stat.label }}
               </h3>
@@ -54,7 +54,7 @@
       <div
         v-for="(table, index) in tables"
         :key="index"
-        class="rounded-2xl dark:bg-slate-900/70 bg-white flex flex-col justify-between"
+        class="rounded-2xl bg-white dark:bg-white/70 flex flex-col justify-between"
       >
         <div class="p-6">
           <h1>{{ table.title }}</h1>
@@ -76,7 +76,7 @@
           </div>
           <!-- Pagination -->
           <div
-            class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800"
+            class="p-3 lg:px-6 border-t border-gray-100 dark:border-gray-800"
           >
             <div class="justify-between items-center block md:flex">
               <div class="flex items-center justify-center mb-6 md:mb-0">
@@ -85,7 +85,7 @@
                   <button
                     v-for="(page, index) in table.pages"
                     :key="index"
-                    class="inline-flex justify-center items-center whitespace-nowrap focus:outline-none transition-colors focus:ring duration-150 border cursor-pointer rounded border-gray-100 dark:border-slate-800 ring-gray-200 dark:ring-gray-500 bg-gray-200 dark:bg-slate-700 hover:bg-gray-200 hover:dark:bg-slate-700 text-sm p-1 mr-3 last:mr-0 mb-3"
+                    class="inline-flex justify-center items-center whitespace-nowrap focus:outline-none transition-colors focus:ring duration-150 border cursor-pointer rounded border-gray-100 dark:border-gray-800 ring-gray-200 dark:ring-gray-500 bg-gray-200 dark:bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-100 text-sm p-1 mr-3 last:mr-0 mb-3"
                   >
                     <span class="px-2">{{ page }}</span>
                   </button>

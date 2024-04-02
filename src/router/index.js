@@ -10,11 +10,11 @@ const router = createRouter({
       component: Dashboard
     },
     {
-      path: '/examination',
+      path: '/Exam',
       component: () => import('../components/Exam/Exam.vue')
     },
     {
-      path: '/examresults',
+      path: '/Examresults',
       component: () => import('../components/ExamResults/ExamResults.vue')
     },
     {
@@ -22,9 +22,10 @@ const router = createRouter({
       component: () => import('../components/Post/Post.vue')
     },
     {
-      path: '/test',
-      component: () => import('@/components/Post/Graph.vue')
+      path: '/Test',
+      component: () => import('@/components/Post/Test.vue')
     },
+    
   ]
 })
 

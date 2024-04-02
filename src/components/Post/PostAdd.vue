@@ -2,13 +2,13 @@
   <div class="popup-overlay flex justify-center items-center">
     <div class="popup-content justify-center bg-gray-900 p-8 rounded-lg mt-10">
       <div>
-        <form @submit.prevent="addPost" class="p-0 md:p-5">
+        <form @submit.prevent="addPostRequest" class="p-0 md:p-5">
           <!-- Modal header -->
           <div
             class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
           >
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-              เพิ่มข้อสอบ
+              เพิ่มประกาศงาน
             </h3>
             <!-- Close button -->
             <button @click.prevent="ModalClose" class="text-white text-5xl">
@@ -19,104 +19,131 @@
           <div class="grid gap-6 mb-6 md:grid-cols-4">
             <div class="col-span-2">
               <label
-                for="text"
+                for="exam_id"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >image</label
+                >บริษัท</label
               >
               <input
-                v-model="formData.image"
-                type="imge"
-                name="image"
-                id="image"
+                v-model="formData.Company"
+                type="text"
+                name="exam_id"
+                id="exam_id"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
+                placeholder="ป้อน ชื่อบริษัท"
+                required=""
+              />
+            </div>
+
+            <div class="col-span-2">
+              <label
+                for="c1"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >หัวข้อ</label
+              >
+              <input
+                v-model="formData.c1"
+                type="text"
+                name="c1"
+                id="c1"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="ป้อน คำตอบ"
                 required=""
               />
             </div>
           </div>
 
+          <div class="gap-6 mb-6 md:grid-cols-4 flex justify-center">
+            <div class="flex">
+              <div class="col-span-2 flex-grow mb-4 mr-6">
+                <label
+                  for="question_1"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >ประเภทธุระกิจ</label
+                >
+                <textarea
+                  v-model="formData.question_1"
+                  type="text"
+                  name="question_1"
+                  id="question_1"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="ป้อน คำถามที่ 1"
+                  required=""
+                ></textarea>
+              </div>
+
+              <div class="col-span-2 flex-grow mb-4 mr-6">
+                <label
+                  for="question_2"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >คำอธิบาย</label
+                >
+                <textarea
+                  v-model="formData.question_2"
+                  type="text"
+                  name="question_2"
+                  id="question_2"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="ป้อน คำถามที่ 2"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
           <div class="grid gap-6 mb-6 md:grid-cols-4">
+            <!-- extype_id to display extype_name -->
             <div class="col-span-2">
               <label
-                for="Company"
+                for="extype_id"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Company</label
+                >ตำแหน่ง</label
+              >
+              <select
+                v-model="formData.extype_id"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                required
+              >
+                <option value="">เลือกตำแหน่ง</option>
+                <option
+                  v-for="type in ExamType"
+                  :key="type._id"
+                  :value="type.extype_id"
+                >
+                  {{ type.extype_name }}
+                  <!-- แสดง extype_name แทน extype_id -->
+                </option>
+              </select>
+            </div>
+
+            <div class="col-span-2">
+              <label
+                for="c1"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >จำนวนที่รับ</label
               >
               <input
-                v-model="formData.Company"
+                v-model="formData.c1"
                 type="text"
-                name="Company"
-                id="Company"
+                name="c1"
+                id="c1"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
+                placeholder="ป้อน คำตอบ"
                 required=""
               />
             </div>
 
             <div class="col-span-2">
               <label
-                for="Header"
+                for="c1_point"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Header</label
+                >เงินเดือน</label
               >
               <input
-                v-model="formData.Header"
+                v-model="formData.c1_point"
                 type="text"
-                name="Header"
-                id="Header"
+                name="c1_point"
+                id="c1_point"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-              />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                for="Description"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Description</label
-              >
-              <input
-                v-model="formData.Description"
-                type="text"
-                name="Description"
-                id="Description"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-              />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                for="department"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >department</label
-              >
-              <input
-                v-model="formData.department"
-                type="text"
-                name="department"
-                id="department"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
-                required=""
-              />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                for="salary"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >salary</label
-              >
-              <input
-                v-model="formData.salary"
-                type="text"
-                name="salary"
-                id="salary"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
+                placeholder="ป้อน คะแนน"
                 required=""
                 @input="validateNumber"
               />
@@ -124,55 +151,213 @@
 
             <div class="col-span-2">
               <label
-                for="sex"
+                for="c2"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >sex</label
+                >อายุ</label
               >
               <input
-                v-model="formData.sex"
+                v-model="formData.c2"
                 type="text"
-                name="sex"
-                id="sex"
+                name="c2"
+                id="c2"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
+                placeholder="ป้อน คำตอบ"
                 required=""
               />
             </div>
 
             <div class="col-span-2">
               <label
-                for="views"
+                for="c2_point"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >views</label
+                >เพศ</label
               >
               <input
-                v-model="formData.views"
+                v-model="formData.c2_point"
                 type="text"
-                name="views"
-                id="views"
+                name="c2_point"
+                id="c2_point"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
+                placeholder="ป้อน คะแนน"
+                required=""
+                @input="validateNumber"
+              />
+            </div>
+
+            <div class="col-span-2">
+              <label
+                for="c3"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >ประสบการณ์</label
+              >
+              <input
+                v-model="formData.c3"
+                type="text"
+                name="c3"
+                id="c3"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="ป้อน คำตอบ"
                 required=""
               />
             </div>
 
             <div class="col-span-2">
               <label
-                for="applicants"
+                for="c3_point"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >applicants</label
+                >ระดับการศึกษา</label
               >
               <input
-                v-model="formData.applicants"
+                v-model="formData.c3_point"
                 type="text"
-                name="applicants"
-                id="applicants"
+                name="c3_point"
+                id="c3_point"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type product name"
+                placeholder="ป้อน คะแนน"
+                required=""
+                @input="validateNumber"
+              />
+            </div>
+
+            <div class="col-span-2">
+              <label
+                for="c4"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >สาขาวิชา</label
+              >
+              <input
+                v-model="formData.c4"
+                type="text"
+                name="c4"
+                id="c4"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="ป้อน คำตอบ"
                 required=""
               />
             </div>
           </div>
+
+          <div class="gap-6 mb-6 md:grid-cols-4 flex justify-center">
+            <div class="flex">
+              <div class="col-span-2 flex-grow mb-4 mr-6">
+                <label
+                  for="question_1"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >คุณสมบัติ</label
+                >
+                <textarea
+                  v-model="formData.question_1"
+                  type="text"
+                  name="question_1"
+                  id="question_1"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="ป้อน คำถามที่ 1"
+                  required=""
+                ></textarea>
+              </div>
+
+              <div class="col-span-2 flex-grow mb-4 mr-6">
+                <label
+                  for="question_2"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >ลักษณะงาน</label
+                >
+                <textarea
+                  v-model="formData.question_2"
+                  type="text"
+                  name="question_2"
+                  id="question_2"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="ป้อน คำถามที่ 2"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="gap-6 mb-6 md:grid-cols-4 flex justify-center">
+            <div class="flex">
+              <div class="col-span-2 flex-grow mb-4 mr-6">
+                <label
+                  for="question_1"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >สัวดิการ</label
+                >
+                <textarea
+                  v-model="formData.question_1"
+                  type="text"
+                  name="question_1"
+                  id="question_1"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="ป้อน คำถามที่ 1"
+                  required=""
+                ></textarea>
+              </div>
+
+              <div class="col-span-2 flex-grow mb-4 mr-6">
+                <label
+                  for="question_2"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >สถานที่ประฏิบัติงาน</label
+                >
+                <textarea
+                  v-model="formData.question_2"
+                  type="text"
+                  name="question_2"
+                  id="question_2"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-30 p-10 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="ป้อน คำถามที่ 2"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-6 mb-6 md:grid-cols-4">
+            <!-- em_id to display em_firstname && em_lastname -->
+            <div class="col-span-2">
+              <label
+                for="em_id"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >พนักงาน</label
+              >
+              <select
+                v-model="formData.em_id"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                required
+              >
+                <option value="">เลือกพนักงาน</option>
+                <option
+                  v-for="employee in Employees"
+                  :key="employee._id"
+                  :value="employee.em_id"
+                >
+                  {{ employee.em_firstname }} {{ employee.em_lastname }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-span-2">
+              <label
+                for="image"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >รูปภาพ 150KB</label
+              >
+              <input
+                type="file"
+                accept="image/*"
+                ref="fileInput"
+                @change="handleImageUpload"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              />
+              <!-- Show uploaded image -->
+              <img
+                v-if="imagePreview"
+                :src="imagePreview"
+                alt="Uploaded Image"
+                class="mt-2 max-w-full h-auto"
+              />
+            </div>
+          </div>
+
           <div class="p-3 mt-2 text-center space-x-4 md:block">
             <!-- Save and Close buttons -->
             <button
@@ -206,64 +391,113 @@ export default {
     return {
       isOpen: false,
       formData: {
+        exam_id: "",
+        extype_id: "",
+        question_1: "",
+        question_2: "",
+        question_3: "",
+        c1: "",
+        c1_point: "",
+        c2: "",
+        c2_point: "",
+        c3: "",
+        c3_point: "",
+        c4: "",
+        c4_point: "",
+        cr_answer: "",
+        em_id: "",
+        statusquestion: "1", // Default value for statusquestion
         image: "",
-        Company: "",
-        Header: "",
-        Description: "",
-        department: "",
-        salary: "",
-        sex: "",
-        views: "",
-        applicants: "",
-        Post_status: "1",
       },
+      imagePreview: null,
+      ExamType: [], // Array to store post types
+      Employees: [], // Array to store post types
     };
   },
+  mounted() {
+    this.fetchPostTypes(); // Fetch post types when component mounts
+    this.fetchEmployees(); // Fetch post types when component mounts
+  },
+
   methods: {
-    async addPost() {
-      // ตรวจสอบว่ามีข้อมูลใดๆ ที่ยังไม่ถูกกรอกหรือไม่
-      for (const key in this.formData) {
-        if (this.formData[key] === "") {
-          Swal.fire("Error!", "Please fill in all fields", "error");
-          return; // หยุดการทำงานของฟังก์ชันถ้ามีข้อมูลที่ยังไม่ถูกกรอก
-        }
-      }
-      Swal.fire({
-        title: "Confirm Add",
-        text: "Are you sure you want to add?",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Confirm",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // เรียกใช้งาน addPostRequest หลังจากผู้ใช้ยืนยันการเพิ่มข้อมูล
-          this.addPostRequest();
-          window.location.reload(); // รีโหลดหน้า
-        }
-      });
+    handleImageUpload() {
+      const file = this.$refs.fileInput.files[0];
+      this.formData.image = file;
+      this.imagePreview = URL.createObjectURL(file);
     },
+
+    async fetchPostTypes() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_POST}/exam-type`
+        );
+        if (response.data.status) {
+          // ตรวจสอบ status ใน JSON response
+          this.ExamType = response.data.data; // แสดงค่าจาก key "data"
+        } else {
+          console.error("Error fetching post types:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching post types:", error);
+      }
+    },
+
+    async fetchEmployees() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_POST}/employees`
+        );
+        if (response.data.status) {
+          // ตรวจสอบ status ใน JSON response
+          this.Employees = response.data.data; // แสดงค่าจาก key "data"
+        } else {
+          console.error("Error fetching post types:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching post types:", error);
+      }
+    },
+
     async addPostRequest() {
       try {
-        // ส่งคำขอเพิ่มข้อมูลไปยัง API โดยใช้ข้อมูลจาก this.formData
-        const response = await axios.post(
+        const formData = new FormData();
+        for (const key in this.formData) {
+          formData.append(key, this.formData[key]);
+        }
+
+        // ส่งคำขอเพิ่มข้อมูลไปยัง API โดยใช้ multipart/form-data
+        await axios.post(
           `${import.meta.env.VITE_API_POST}/post/insert-post`,
-          this.formData
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
 
-        // หลังจากเพิ่มข้อมูลสำเร็จ
-        Swal.fire("Added!", "Data has been added successfully", "success");
-        // Refresh the page
-
-        // ไม่ต้องรีเฟรชหน้าหรือเปลี่ยนเส้นทาง URL ที่นี่
-        // ดำเนินการเพิ่มข้อมูลในรายการที่แสดงผล ตามต้องการ
+        // Show confirmation dialog
+        Swal.fire({
+          title: "Confirm Add",
+          text: "Are you sure you want to add?",
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
+        }).then((result) => {
+          // หากผู้ใช้กดปุ่ม OK
+          if (result.isConfirmed) {
+            window.location.reload(); // รีโหลดหน้า
+          }
+        });
       } catch (error) {
-        console.error("Error adding data:", error);
-        Swal.fire("Error!", "Failed to add data", "error");
+        console.error("Error updating data:", error);
+        Swal.fire("Error!", "Failed to update data", "error");
       }
     },
+
     ModalClose() {
       this.$emit("close");
     },
@@ -279,17 +513,16 @@ export default {
 </script>
 
 <style scoped>
+/* Styles for popup overlay and content */
 .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(0, 0, 0);
   display: flex;
   justify-content: center;
   align-items: center;
-  pointer-events: none; /* เพิ่ม property เพื่อบล็อกการเชื่อมต่อที่ปุ่มหลัง */
 }
 
 .popup-content {
@@ -299,6 +532,5 @@ export default {
   width: 100%;
   max-height: 90%;
   overflow-y: auto;
-  pointer-events: auto; /* กำหนดให้เมาส์และการคลิกทำงานในเนื้อหาของป๊อปอัพ */
 }
 </style>

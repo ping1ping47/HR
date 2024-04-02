@@ -1,164 +1,150 @@
 <template>
-  <div class="rounded-2xl bg-black flex flex-col dark:bg-slate-900/70">
-    <div class="flex-1">
-      <div class="p-3">
-        <input
-          type="text"
-          v-model="searchText"
-          placeholder="ค้นหาตำแหน่งงาน..."
-          class="px-3 py-1 border border-gray-300 rounded-md bg-black text-white"
-          @input="searchJobByPosition"
-        />
-      </div>
-
-      <div class="col-span-1 sm:col-span-1">
-        <label
-          for="status"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >เลือกสถานะ</label
-        >
-        <select
-          id="status"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-36 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >
-          <option value="ALL">ทั้งหมด</option>
-          <option value="ON">เปิดรับสมัคร</option>
-          <option value="OFF">ปิดรับสมัคร</option>
-        </select>
-      </div>
-      <div
-        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
-      >
-        <button
-          @click="AddPopup = true"
-          class="bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
-        >
-          เพิ่มข้อสอบ
-        </button>
-
-        <Add v-if="AddPopup" :post="AddPopup" @close="AddPopup = false" />
-      </div>
-
+  <div class="max-w-screen-lg mx-auto">
+    <div class="flex-1 md:px-1 md:py-2">
       <h1
-        class="my-4 text-3xl text-center font-medium tracking-wider text-purple-700"
+        class="my-4 text-3xl flex justify-center font-medium tracking-wider text-purple-700"
       >
-        ข้อมูลการประกาศงาน
+        ข้อมูลประกาศงาน
       </h1>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-4 mb-6">
-        <div class="rounded-2xl flex-col dark:bg-slate-900/70 bg-white flex">
-          <h1>กราฟวิเคราะจำนวนผู้สมัคร</h1>
+      <div class="rounded-2xl flex-col flex justify-center items-center">
+        <graph />
+        <h1>กราฟวิเคราะจำนวนผู้สมัคร</h1>
+      </div>
+
+      <div class="flex justify-center items-center space-x-3">
+        <div class="flex items-center">
+          <input
+            type="text"
+            v-model="searchText"
+            placeholder="ค้นหาบริษัท..."
+            class="px-3 py-1 border border-gray-300 rounded-md h-10"
+            @input="searchPostById"
+          />
+        </div>
+        <!-- **************************************************** -->
+        <div class="flex items-center">
+          <div class="text-sm font-medium">เลือกตำแน่ง: {{}}</div>
+          <select
+            class="ml-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            v-model="selectedPostType"
+            @change="fetchPosts"
+          >
+            <option value="0">แสดงทั้งหมด</option>
+            <option
+              v-for="type in examTypes"
+              :key="type.extype_id"
+              :value="type.extype_id"
+            >
+              {{ type.extype_name }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <button
+            @click="togglePopup"
+            class="btn-add bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
+          >
+            เพิ่มประกาศงาน
+          </button>
+          <Add v-if="AddPopup" :post="AddPopup" @close="AddPopup = false" />
         </div>
       </div>
 
-      <table class="w-24 mt-6">
+      <table>
         <thead>
           <tr>
             <th class="border border-gray-300 text-center px-2 py-2">ลำดับ</th>
-            <th class="border border-gray-300 text-center px-2 py-2">รูป</th>
-            <th class="border border-gray-300 text-center px-2 py-2 th-shorten">
-              บริษัท
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2 th-shorten">
-              หัวข้อ
-            </th>
+            <th class="border border-gray-300 text-center px-2 py-2">บริษัท</th>
+            <th class="border border-gray-300 text-center px-2 py-2">หัวข้อ</th>
             <th class="border border-gray-300 text-center px-2 py-2">
               ตำแหน่ง
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              เงินเดือน
+              คำอธิบาย
             </th>
-            <th class="border border-gray-300 text-center px-2 py-2">เพศ</th>
+            <th class="border border-gray-300 text-center px-2 py-2">
+              พนักงาน
+            </th>
             <th class="border border-gray-300 text-center px-2 py-2">
               วันที่ประกาศ
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              วันที่เปิดรับ
+              วันที่ปิดประกาศ
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              วันที่แก้ไข
+              สถานะประกาศ
             </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              จำนวนผู้ชม
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              จำนวนผู้สมัคร
-            </th>
-            <th class="border border-gray-300 text-center px-2 py-2">สถานะ</th>
-            <th class="border border-gray-300 text-center px-2 py-2">
-              Actions
-            </th>
+            <th class="border border-gray-300 text-center px-2 py-2">จัดการ</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(post, index) in posts"
-            :key="post._id"
-            class="border-b border-gray-200 hover:bg-gray-50 dark:hover:bg-slate-800"
-          >
-            <td class="py-4 border border-gray-300 text-center">
+          <tr v-for="(post, index) in paginatedPosts" :key="index">
+            <td class="py-4 border border-gray-300 table-cell">
               {{ index + 1 }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              <img
-                :src="post.image"
-                alt="Job Image"
-                class="w-10 h-10 rounded-full"
-              />
+
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ post.Company }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              <span v-if="post.Company.length <= 24">{{ post.Company }}</span>
-              <span v-else>{{ post.Company.slice(0, 21) }}... </span>
+
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ post.Header }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              <span v-if="post.Header.length <= 24">{{ post.Header }}</span>
-              <span v-else>{{ post.Header.slice(0, 21) }}... </span>
-            </td>
-            <td class="py-4 border border-gray-300 text-center">
+
+            <td class="py-4 border border-gray-300 table-cell">
               {{ post.department }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ post.salary }}
+
+            <td class="py-4 border border-gray-300 table-cell">
+              <span v-if="post.Description && post.Description.length <= 24">{{
+                post.Description.length
+              }}</span>
+              <span v-else>{{
+                post.Description ? post.Description.slice(0, 21) + "..." : ""
+              }}</span>
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ post.sex }}
-            </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ post.post_date }}
-            </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ post.post_date }}
-            </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ post.Update_date }}
-            </td>
-            <td class="py-4 border border-gray-300 text-center">
+
+            <td class="py-4 border border-gray-300 table-cell">
               {{ post.views }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
-              {{ post.applicants }}
+
+            <td class="py-4 border border-gray-300table-cell">
+              {{ post.post_date }}
             </td>
-            <td class="py-4 border border-gray-300 text-center">
+
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ post.Update_date }}
+            </td>
+
+            <td class="py-4 border border-gray-300 table-cell">
               {{ post.Post_status }}
             </td>
-            <td class="py-2 border border-gray-300 text-center space-x-2">
+
+            <td class="py-4 border border-gray-300 table-cell">
               <button
                 @click="openDetailsPopup(post)"
                 class="btn-details bg-blue-500 hover:bg-blue-600"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-white p-1"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  width="24"
+                  height="24"
                 >
                   <path
-                    fill-rule="evenodd"
-                    d="M10 2a1 1 0 00-.553.168l-5 3A1 1 0 004 6v5a1 1 0 00.447.832l5 3a1 1 0 001.106 0l5-3A1 1 0 0016 11V6a1 1 0 00-.447-.832l-5-3A1 1 0 0010 2zM6 7.236v5.528L9.037 10 6 7.236z"
-                    clip-rule="evenodd"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
                   />
                 </svg>
               </button>
+
               <View
                 v-if="ShowPopup"
                 :post="selectedPost"
@@ -170,14 +156,36 @@
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-white p-1"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  width="24"
+                  height="24"
                 >
                   <path
-                    fill-rule="evenodd"
-                    d="M5.293 12.707a1 1 0 010-1.414L13.586 3H11a1 1 0 110-2h6a1 1 0 011 1v6a1 1 0 01-2 0V5.414l-8.293 8.293a1 1 0 01-1.414 0zM18 17a1 1 0 01-1 1H3a1 1 0 01-1-1v-6a1 1 0 011-1h10zm-5 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm-3 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm6-1a1 1 0 011 1h1a1 1 0 110 2h-1a1 1 0 01-1-1V9a1 1 0 011-1z"
-                    clip-rule="evenodd"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 17L21 12 16 7"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7l-5 5 5 5"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h13"
                   />
                 </svg>
               </button>
@@ -192,14 +200,18 @@
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-white p-1"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  width="24"
+                  height="24"
                 >
                   <path
-                    fill-rule="evenodd"
-                    d="M5 4a1 1 0 011-1h8a1 1 0 011 1v1h2a1 1 0 110 2H3a1 1 0 110-2h2V4zm10 4a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1V9a1 1 0 011-1h10zm-5 2a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm-3 0a1 1 0 00-1 1v5a1 1 0 102 0v-5a1 1 0 00-1-1zm6-1a1 1 0 011 1h1a1 1 0 110 2h-1a1 1 0 01-1-1V9a1 1 0 011-1z"
-                    clip-rule="evenodd"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
               </button>
@@ -208,118 +220,292 @@
         </tbody>
       </table>
 
-      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
-        <div class="justify-between items-center block md:flex">
-          <div class="flex items-center justify-center">
-            <small>หน้า 1 จาก {{ posts.length }}</small>
-          </div>
+      <!-- Pagination -->
+      <div class="flex justify-center items-center mt-4 space-x-4">
+        <!-- Showing X to Y of Z -->
+        <div class="text-sm text-gray-600">
+          Showing {{ (currentPage - 1) * perPage + 1 }} to
+          {{ Math.min(currentPage * perPage, filteredPosts.length) }} of
+          {{ filteredPosts.length }}
         </div>
+
+        <!-- Previous Page Button -->
+        <button
+          v-if="currentPage > 1"
+          @click="currentPage--"
+          class="btn-pagination bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300"
+        >
+          &lt; Previous
+        </button>
+
+        <!-- Page Numbers -->
+        <div class="flex space-x-4">
+          <button
+            v-for="pageNumber in totalPages"
+            :key="pageNumber"
+            @click="currentPage = pageNumber"
+            :class="{
+              'bg-purple-500 text-white': pageNumber === currentPage,
+              'bg-gray-200': pageNumber !== currentPage,
+            }"
+            class="btn-pagination px-4 py-2 rounded-md hover:bg-purple-600 hover:text-white"
+          >
+            {{ pageNumber }}
+          </button>
+        </div>
+
+        <!-- Next Page Button -->
+        <button
+          v-if="currentPage < totalPages"
+          @click="currentPage++"
+          class="btn-pagination bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300"
+        >
+          Next &gt;
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Add from "./PostAdd.vue";
 import Edit from "./PostEdit.vue";
 import View from "./PostView.vue";
+import Graph from "./Graph.vue";
+
 export default {
   components: {
     Add,
     Edit,
     View,
+    Graph,
+
+    displayedItems() {
+      const start = (this.currentPage - 1) * this.perPage + 1;
+      const end = Math.min(
+        this.currentPage * this.perPage,
+        this.filteredPosts.length
+      );
+      return `Showing ${start} to ${end} of ${this.filteredPosts.length}`;
+    },
   },
+
   data() {
     return {
+      examTypes: [], // กำหนดค่าเริ่มต้นเป็นอาร์เรย์ว่าง
+      selectedPostType: "0",
+      selectedPostTypeName: "แสดงทั้งหมด",
       posts: [],
-      searchText: "",
-      ShowPopup: false,
-      AddPopup: false,
-      EditPopup: false,
-      PostToEdit: null,
-      isDeleteModalOpen: false,
-      selectedPost: null,
+      perPage: 10, // จำนวนข้อมูลต่อหน้า
+      currentPage: 1, // หน้าปัจจุบัน
     };
   },
-  mounted() {
-    this.fetchPosts();
-    // โดยเพิ่มเงื่อนไขตรวจสอบหาก this.posts ไม่มีข้อมูล ให้เรียกใช้ fetchPosts อีกครั้ง
-    if (this.posts.length === 0) {
-      this.fetchPosts();
-    }
-  },
-  props: {
-    post: Object,
+
+  computed: {
+    filteredPosts() {
+      if (this.selectedPostType === "0") {
+        return this.posts;
+      } else {
+        return this.posts.filter(
+          (post) => post.extype_id === this.selectedPostType
+        );
+      }
+    },
+
+    totalPages() {
+      return Math.ceil(this.filteredPosts.length / this.perPage);
+    },
+
+    paginatedPosts() {
+      const start = (this.currentPage - 1) * this.perPage;
+      const end = start + this.perPage;
+      return this.filteredPosts.slice(start, end);
+    },
   },
   methods: {
-    async fetchPosts() {
+    fetchPostTypes() {
+      fetch(import.meta.env.VITE_API_POST + "/exam-type")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          this.examTypes = data.data;
+          this.fetchPosts();
+        })
+        .catch((error) => {
+          console.error("Error fetching exam types:", error);
+        });
+    },
+    fetchPosts() {
+      let url = import.meta.env.VITE_API_POST + "/exam";
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          this.posts = data.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching posts:", error);
+        });
+    },
+  },
+  mounted() {
+    this.fetchPostTypes();
+  },
+
+  setup() {
+    const posts = ref([]);
+    const originalPosts = ref([]);
+    const searchText = ref("");
+    const ShowPopup = ref(false);
+    const AddPopup = ref(false);
+    const EditPopup = ref(false);
+    const PostToEdit = ref(null);
+    const selectedPost = ref(null);
+    const selectedExtTypeId = ref("ALL"); // Change here
+    const positions = ref([]); // Add this line
+
+    const fetchPosts = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_POST}/post`
         );
-        if (response.data && Array.isArray(response.data.data)) {
-          this.posts = response.data.data;
+        if (
+          response.status === 200 &&
+          response.data &&
+          Array.isArray(response.data.data)
+        ) {
+          posts.value = response.data.data;
+          originalPosts.value = response.data.data;
         } else {
-          console.error("Response data is not an array:", response.data);
+          console.error(
+            "Invalid response format or empty data array:",
+            response.data
+          );
         }
       } catch (error) {
         console.error("Error fetching posts:", error);
+        posts.value = [];
+        originalPosts.value = [];
       }
-    },
-    togglePopup() {
-      this.AddPopup = !this.AddPopup;
-    },
-    openEditModal(post) {
-      this.PostToEdit = post;
-      this.EditPopup = true;
-    },
-    handleClose() {
-      this.$emit("close");
-    },
-    async deletef(post) {
+    };
+
+    onMounted(async () => {
+      await fetchPosts();
+      await fetchPositionById();
+    });
+
+    const togglePopup = () => {
+      AddPopup.value = !AddPopup.value;
+    };
+
+    const openEditModal = (post) => {
+      PostToEdit.value = post;
+      EditPopup.value = true;
+    };
+
+    const handleClose = () => {
+      ShowPopup.value = false;
+    };
+
+    const deletef = async (post) => {
       Swal.fire({
-        title: "ยืนยันการลบ",
-        text: "คุณแน่ใจหรือไม่ที่จะลบข้อมูล?",
+        title: "Confirm Delete",
+        text: "Are you sure you want to delete this post?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "ยืนยัน",
-        cancelButtonText: "ยกเลิก",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
-          this.deletePost(post);
+          deletePost(post);
         }
       });
-    },
-    async deletePost(post) {
+    };
+
+    const deletePost = async (posts) => {
       try {
         await axios.delete(
           `${import.meta.env.VITE_API_POST}/post/delete-post/${post._id}`
         );
-        Swal.fire("ลบแล้ว!", "ข้อมูลถูกลบออกสำเร็จ", "success");
-        this.posts = this.posts.filter((item) => item._id !== post._id);
-      } catch (error) {
-        console.error("Error deleting data:", error);
-        Swal.fire("เกิดข้อผิดพลาด!", "ไม่สามารถลบข้อมูลได้", "error");
-      }
-    },
-    searchPostById() {
-      if (this.searchText.trim()) {
-        const filteredPosts = this.posts.filter((post) =>
-          post.id.includes(this.searchText)
+        Swal.fire("Deleted!", "The post has been deleted.", "success");
+        posts.value = posts.value.filter((item) => item._id !== post._id);
+        originalPosts.value = originalPosts.value.filter(
+          (item) => item._id !== post._id
         );
-        this.posts = filteredPosts;
-      } else {
-        this.fetchPosts();
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        Swal.fire("Error!", "Failed to delete the post.", "error");
       }
-    },
-    openDetailsPopup(post) {
-      this.selectedPost = post;
-      this.ShowPopup = true;
-    },
+    };
+
+    const searchPostById = () => {
+      if (searchText.value.trim()) {
+        const filteredPosts = originalPosts.value.filter((post) =>
+          post.Company.includes(searchText.value)
+        );
+        posts.value = filteredPosts;
+      } else {
+        posts.value = [...originalPosts.value];
+      }
+    };
+
+    const fetchPositionById = async () => {
+      if (typeof selectedExtTypeId.value !== "undefined") {
+        // ตรวจสอบว่า selectedExtTypeId มีค่าหรือไม่
+        if (selectedExtTypeId.value !== "ALL") {
+          try {
+            const response = await axios.get(
+              `${import.meta.env.VITE_API_POST}/exam-type/${
+                selectedExtTypeId.value
+              }`
+            );
+            if (response.status === 200 && response.data) {
+              positions.value = response.data; // Set positions with the fetched data
+            } else {
+              console.error(
+                "Invalid response format or empty data:",
+                response.data
+              );
+            }
+          } catch (error) {
+            console.error("Error fetching exam-type:", error);
+          }
+        } else {
+          positions.value = []; // Reset positions if all positions are selected
+        }
+      }
+    };
+
+    const openDetailsPopup = (post) => {
+      selectedPost.value = post;
+      ShowPopup.value = true;
+    };
+
+    return {
+      posts,
+      searchText,
+      ShowPopup,
+      AddPopup,
+      EditPopup,
+      PostToEdit,
+      selectedPost,
+      selectedExtTypeId,
+      positions, // Add positions here
+      fetchPosts,
+      togglePopup,
+      openEditModal,
+      handleClose,
+      deletef,
+      deletePost,
+      searchPostById,
+      openDetailsPopup,
+      fetchPositionById, // Add fetchPositionById here
+    };
   },
 };
 </script>

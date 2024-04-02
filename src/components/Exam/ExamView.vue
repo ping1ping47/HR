@@ -1,9 +1,12 @@
 <template>
   <div class="popup-overlay flex justify-center items-center">
-    <div class="popup-content justify-center bg-gray-900 p-8 rounded-lg mt-10">
-      <div class="grid gap-6 md:grid-cols-2">
+    <div
+      class="popup-content justify-center bg-gray-900 p-8 rounded-lg mt-10 space-y-4"
+    >
+      <!-- เพิ่ม space-y-4 เพื่อเพิ่มระยะห่างในระดับบล็อก -->
+      <div>
         <!-- Modal header -->
-        <div class="p-4 border-b rounded-t md:col-span-2">
+        <div class="flex items-center justify-between p-4 md:p-5">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
             ข้อมูลข้อสอบ
           </h3>
@@ -14,7 +17,8 @@
         </div>
 
         <!-- Exam ID and Exam Type ID -->
-        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
           <div class="border p-2 rounded-md">
             <label
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -36,13 +40,13 @@
         </div>
 
         <!-- Image -->
-        <div class="md:col-span-2">
+        <div class="md:col-span-2 p-4">
           <label
             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
             รูป
           </label>
-          <div class="border p-2 rounded-md">
+          <div class="border p-2 rounded-md flex justify-center">
             <img
               v-if="formData.image"
               :src="formData.image"
@@ -56,7 +60,7 @@
         </div>
 
         <!-- Questions -->
-        <div class="md:col-span-2">
+        <div class="md:col-span-2 p-4">
           <label
             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
@@ -81,7 +85,7 @@
         </div>
 
         <!-- Choices and Points -->
-        <div class="md:col-span-2">
+        <div class="md:col-span-2 p-4">
           <label
             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
@@ -91,7 +95,7 @@
             <div
               v-for="(choice, index) in [1, 2, 3, 4]"
               :key="index"
-              class="border p-2 rounded-md"
+              class="border p-1 rounded-md"
             >
               <label class="block font-medium text-gray-900 dark:text-white"
                 >ข้อ {{ choice }}</label
@@ -108,7 +112,7 @@
         </div>
 
         <!-- Correct Answer -->
-        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
           <div class="border p-2 rounded-md">
             <label
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -119,10 +123,24 @@
               {{ formData.cr_answer }}
             </p>
           </div>
+          <div class="border p-2 rounded-md">
+            <label
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              วันที่สร้าง
+            </label>
+            <p class="text-gray-900 dark:text-white">
+              สร้าง : {{ formData.date_post }}
+              <td>
+                แก้ไข :
+                {{ formData.update_at }}
+              </td>
+            </p>
+          </div>
         </div>
 
         <!-- Employee ID and Status -->
-        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
           <div class="border p-2 rounded-md">
             <label
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -158,6 +176,7 @@
     </div>
   </div>
 </template>
+
   
 <script>
 export default {
@@ -207,7 +226,6 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;

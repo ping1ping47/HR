@@ -43,3 +43,5 @@ npm install chart.js --save
 npm install chartjs-plugin-datalabels
 
 npm install chart.js
+
+npm install @syncfusion/ej2-data

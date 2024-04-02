@@ -4,31 +4,25 @@
       <h1
         class="my-4 text-3xl flex justify-center font-medium tracking-wider text-purple-700"
       >
-        ข้อมูลผลการสอบ
+        ข้อมูลข้อสอบ
       </h1>
-
-      <div class="rounded-2xl flex-col flex justify-center items-center">
-        <Calendar />
-        <h1>ปฏิทิน</h1>
-      </div>
-
       <div class="flex justify-center items-center space-x-3">
         <div class="flex items-center">
           <input
             type="text"
             v-model="searchText"
-            placeholder="ค้นหาบริษัท..."
+            placeholder="ค้นหาตำแหน่งงาน..."
             class="px-3 py-1 border border-gray-300 rounded-md h-10"
-            @input="searchPostById"
+            @input="searchExamById"
           />
         </div>
         <!-- **************************************************** -->
         <div class="flex items-center">
-          <div class="text-sm font-medium">เลือกตำแน่ง: {{}}</div>
+          <div class="text-sm font-medium">ประเภทข้อสอบที่เลือก: {{}}</div>
           <select
             class="ml-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-            v-model="selectedPostType"
-            @change="fetchPosts"
+            v-model="selectedExamType"
+            @change="fetchExams"
           >
             <option value="0">แสดงทั้งหมด</option>
             <option
@@ -46,9 +40,9 @@
             @click="togglePopup"
             class="btn-add bg-purple-500 border border-purple-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-md hover:shadow-lg hover:bg-purple-600"
           >
-            เพิ่มประกาศงาน
+            เพิ่มข้อสอบ
           </button>
-          <Add v-if="AddPopup" :results="AddPopup" @close="AddPopup = false" />
+          <Add v-if="AddPopup" :exam="AddPopup" @close="AddPopup = false" />
         </div>
       </div>
 
@@ -56,78 +50,121 @@
         <thead>
           <tr>
             <th class="border border-gray-300 text-center px-2 py-2">ลำดับ</th>
-            <th class="border border-gray-300 text-center px-2 py-2">บริษัท</th>
-            <th class="border border-gray-300 text-center px-2 py-2">หัวข้อ</th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              ตำแหน่ง
+              รหัสข้อสอบ
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              คำอธิบาย
+              รหัสประเภท
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              พนักงาน
+              รายละเอียด 1
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              วันที่ประกาศ
+              รายละเอียด 2
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              วันที่ปิดประกาศ
+              รายละเอียด 3
+            </th>
+            <th class="border border-gray-300 text-center px-2 py-2">ข้อ 1</th>
+            <th class="border border-gray-300 text-center px-2 py-2">
+              คะแนนข้อ 1
+            </th>
+            <th class="border border-gray-300 text-center px-2 py-2">ข้อ 2</th>
+            <th class="border border-gray-300 text-center px-2 py-2">
+              คะแนนข้อ 2
+            </th>
+            <th class="border border-gray-300 text-center px-2 py-2">ข้อ 3</th>
+            <th class="border border-gray-300 text-center px-2 py-2">
+              คะแนนข้อ 3
+            </th>
+            <th class="border border-gray-300 text-center px-2 py-2">ข้อ 4</th>
+            <th class="border border-gray-300 text-center px-2 py-2">
+              คะแนนข้อ 4
             </th>
             <th class="border border-gray-300 text-center px-2 py-2">
-              สถานะประกาศ
+              คำตอบที่ถูก
             </th>
+            <th class="border border-gray-300 text-center px-2 py-2">
+              รหัสพนักงาน
+            </th>
+            <th class="border border-gray-300 text-center px-2 py-2">สถานะ</th>
             <th class="border border-gray-300 text-center px-2 py-2">จัดการ</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(results, index) in paginatedPosts" :key="index">
+          <tr v-for="(exam, index) in paginatedExams" :key="index">
             <td class="py-4 border border-gray-300 table-cell">
               {{ index + 1 }}
             </td>
-
             <td class="py-4 border border-gray-300 table-cell">
-              {{ results.Company }}
+              {{ exam.exam_id }}
             </td>
-
             <td class="py-4 border border-gray-300 table-cell">
-              {{ results.Header }}
+              {{ exam.extype_id }}
             </td>
-
             <td class="py-4 border border-gray-300 table-cell">
-              {{ results.department }}
-            </td>
-
-            <td class="py-4 border border-gray-300 table-cell">
-              <span
-                v-if="results.Description && results.Description.length <= 24"
-                >{{ results.Description.length }}</span
-              >
+              <span v-if="exam.question_1 && exam.question_1.length <= 24">{{
+                exam.question_1.length
+              }}</span>
               <span v-else>{{
-                results.Description
-                  ? results.Description.slice(0, 21) + "..."
-                  : ""
+                exam.question_1 ? exam.question_1.slice(0, 21) + "..." : ""
               }}</span>
             </td>
 
             <td class="py-4 border border-gray-300 table-cell">
-              {{ results.views }}
+              <span v-if="exam.question_2 && exam.question_2.length <= 24">{{
+                exam.question_2.length
+              }}</span>
+              <span v-else>{{
+                exam.question_2 ? exam.question_2.slice(0, 21) + "..." : ""
+              }}</span>
             </td>
 
+            <td class="py-4 border border-gray-300 table-cell">
+              <span v-if="exam.question_3 && exam.question_3.length <= 24">{{
+                exam.question_3.length
+              }}</span>
+              <span v-else>{{
+                exam.question_3 ? exam.question_3.slice(0, 21) + "..." : ""
+              }}</span>
+            </td>
+
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ exam.c1 }}
+            </td>
             <td class="py-4 border border-gray-300table-cell">
-              {{ results.post_date }}
+              {{ exam.c1_point }}
             </td>
-
             <td class="py-4 border border-gray-300 table-cell">
-              {{ results.Update_date }}
+              {{ exam.c2 }}
             </td>
-
             <td class="py-4 border border-gray-300 table-cell">
-              {{ results.Post_status }}
+              {{ exam.c2_point }}
             </td>
-
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ exam.c3 }}
+            </td>
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ exam.c3_point }}
+            </td>
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ exam.c4 }}
+            </td>
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ exam.c4_point }}
+            </td>
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ exam.cr_answer }}
+            </td>
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ exam.em_id }}
+            </td>
+            <td class="py-4 border border-gray-300 table-cell">
+              {{ exam.statusquestion }}
+            </td>
             <td class="py-4 border border-gray-300 table-cell">
               <button
-                @click="openDetailsPopup(results)"
+                @click="openDetailsPopup(exam)"
                 class="btn-details bg-blue-500 hover:bg-blue-600"
               >
                 <svg
@@ -150,11 +187,11 @@
 
               <View
                 v-if="ShowPopup"
-                :results="selectedPost"
+                :exam="selectedExam"
                 @close="ShowPopup = false"
               />
               <button
-                @click="openEditModal(results)"
+                @click="openEditModal(exam)"
                 class="btn-edit bg-yellow-500 hover:bg-yellow-600"
               >
                 <svg
@@ -194,11 +231,11 @@
               </button>
               <Edit
                 v-if="EditPopup"
-                :results="PostToEdit"
+                :exam="ExamToEdit"
                 @close="EditPopup = false"
               />
               <button
-                @click="deletef(results)"
+                @click="deletef(exam)"
                 class="btn-delete bg-red-500 hover:bg-red-600"
               >
                 <svg
@@ -228,8 +265,8 @@
         <!-- Showing X to Y of Z -->
         <div class="text-sm text-gray-600">
           Showing {{ (currentPage - 1) * perPage + 1 }} to
-          {{ Math.min(currentPage * perPage, filteredPosts.length) }} of
-          {{ filteredPosts.length }}
+          {{ Math.min(currentPage * perPage, filteredExams.length) }} of
+          {{ filteredExams.length }}
         </div>
 
         <!-- Previous Page Button -->
@@ -274,114 +311,112 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
-// import Add from "./ResultAdd.vue";
-// import Edit from "./ResultEdit.vue";
-// import View from "./ResultView.vue";
-import Calendar from "./Calendar.vue";
+import Add from "../Exam/ExamAdd.vue";
+import Edit from "../Exam/ExamEdit.vue";
+import View from "../Exam/ExamView.vue";
 
 export default {
   components: {
-    // Add,
-    // Edit,
-    // View,
-    Calendar,
+    Add,
+    Edit,
+    View,
 
     displayedItems() {
       const start = (this.currentPage - 1) * this.perPage + 1;
       const end = Math.min(
         this.currentPage * this.perPage,
-        this.filteredPosts.length
+        this.filteredExams.length
       );
-      return `Showing ${start} to ${end} of ${this.filteredPosts.length}`;
+      return `Showing ${start} to ${end} of ${this.filteredExams.length}`;
     },
   },
 
   data() {
     return {
       examTypes: [], // กำหนดค่าเริ่มต้นเป็นอาร์เรย์ว่าง
-      selectedPostType: "0",
-      selectedPostTypeName: "แสดงทั้งหมด",
-      resultss: [],
+      selectedExamType: "0",
+      selectedExamTypeName: "แสดงทั้งหมด",
+      exams: [],
       perPage: 10, // จำนวนข้อมูลต่อหน้า
       currentPage: 1, // หน้าปัจจุบัน
     };
   },
 
   computed: {
-    filteredPosts() {
-      if (this.selectedPostType === "0") {
-        return this.resultss;
+    filteredExams() {
+      if (this.selectedExamType === "0") {
+        return this.exams;
       } else {
-        return this.resultss.filter(
-          (post) => results.extype_id === this.selectedPostType
+        return this.exams.filter(
+          (exam) => exam.extype_id === this.selectedExamType
         );
       }
     },
 
     totalPages() {
-      return Math.ceil(this.filteredPosts.length / this.perPage);
+      return Math.ceil(this.filteredExams.length / this.perPage);
     },
 
-    paginatedPosts() {
+    paginatedExams() {
       const start = (this.currentPage - 1) * this.perPage;
       const end = start + this.perPage;
-      return this.filteredPosts.slice(start, end);
+      return this.filteredExams.slice(start, end);
     },
   },
   methods: {
-    fetchPostTypes() {
-      fetch(import.meta.env.VITE_API_POST + "/exam-type")
+    fetchExamTypes() {
+      fetch("http://127.0.0.1:3000/exam-type")
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
           this.examTypes = data.data;
-          this.fetchPosts();
+          this.fetchExams();
         })
         .catch((error) => {
           console.error("Error fetching exam types:", error);
         });
     },
-    fetchPosts() {
-      let url = import.meta.env.VITE_API_POST + "/exam";
+    fetchExams() {
+      let url = "http://127.0.0.1:3000/exam";
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          this.resultss = data.data;
+          this.exams = data.data;
         })
         .catch((error) => {
-          console.error("Error fetching resultss:", error);
+          console.error("Error fetching exams:", error);
         });
     },
   },
   mounted() {
-    this.fetchPostTypes();
+    this.fetchExamTypes();
   },
 
   setup() {
-    const resultss = ref([]);
-    const originalPosts = ref([]);
+    const exams = ref([]);
+    const originalExams = ref([]);
     const searchText = ref("");
     const ShowPopup = ref(false);
     const AddPopup = ref(false);
     const EditPopup = ref(false);
-    const PostToEdit = ref(null);
-    const selectedPost = ref(null);
+    const ExamToEdit = ref(null);
+    const selectedExam = ref(null);
     const selectedExtTypeId = ref("ALL"); // Change here
     const positions = ref([]); // Add this line
 
-    const fetchPosts = async () => {
+    const fetchExams = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_POST}/ExamResults`
+          `${import.meta.env.VITE_API_EXAM}/exam`
         );
         if (
           response.status === 200 &&
           response.data &&
           Array.isArray(response.data.data)
         ) {
-          resultss.value = response.data.data;
-          originalPosts.value = response.data.data;
+          exams.value = response.data.data;
+          originalExams.value = response.data.data;
         } else {
           console.error(
             "Invalid response format or empty data array:",
@@ -389,14 +424,14 @@ export default {
           );
         }
       } catch (error) {
-        console.error("Error fetching resultss:", error);
-        resultss.value = [];
-        originalPosts.value = [];
+        console.error("Error fetching exams:", error);
+        exams.value = [];
+        originalExams.value = [];
       }
     };
 
     onMounted(async () => {
-      await fetchPosts();
+      await fetchExams();
       await fetchPositionById();
     });
 
@@ -404,8 +439,8 @@ export default {
       AddPopup.value = !AddPopup.value;
     };
 
-    const openEditModal = (results) => {
-      PostToEdit.value = results;
+    const openEditModal = (exam) => {
+      ExamToEdit.value = exam;
       EditPopup.value = true;
     };
 
@@ -413,10 +448,10 @@ export default {
       ShowPopup.value = false;
     };
 
-    const deletef = async (results) => {
+    const deletef = async (exam) => {
       Swal.fire({
         title: "Confirm Delete",
-        text: "Are you sure you want to delete this results?",
+        text: "Are you sure you want to delete this exam?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -425,39 +460,35 @@ export default {
         cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
-          deletePost(results);
+          deleteExam(exam);
         }
       });
     };
 
-    const deletePost = async (resultss) => {
+    const deleteExam = async (exam) => {
       try {
         await axios.delete(
-          `${import.meta.env.VITE_API_POST}/examresults/delete-examresults/${
-            results._id
-          }`
+          `${import.meta.env.VITE_API_EXAM}/exam/delete-exam/${exam._id}`
         );
-        Swal.fire("Deleted!", "The results has been deleted.", "success");
-        resultss.value = resultss.value.filter(
-          (item) => item._id !== results._id
-        );
-        originalPosts.value = originalPosts.value.filter(
-          (item) => item._id !== results._id
+        Swal.fire("Deleted!", "The exam has been deleted.", "success");
+        exams.value = exams.value.filter((item) => item._id !== exam._id);
+        originalExams.value = originalExams.value.filter(
+          (item) => item._id !== exam._id
         );
       } catch (error) {
-        console.error("Error deleting results:", error);
-        Swal.fire("Error!", "Failed to delete the results.", "error");
+        console.error("Error deleting exam:", error);
+        Swal.fire("Error!", "Failed to delete the exam.", "error");
       }
     };
 
-    const searchPostById = () => {
+    const searchExamById = () => {
       if (searchText.value.trim()) {
-        const filteredPosts = originalPosts.value.filter((results) =>
-          results.Company.includes(searchText.value)
+        const filteredExams = originalExams.value.filter((exam) =>
+          exam.exam_id.includes(searchText.value)
         );
-        resultss.value = filteredPosts;
+        exams.value = filteredExams;
       } else {
-        resultss.value = [...originalPosts.value];
+        exams.value = [...originalExams.value];
       }
     };
 
@@ -467,7 +498,7 @@ export default {
         if (selectedExtTypeId.value !== "ALL") {
           try {
             const response = await axios.get(
-              `${import.meta.env.VITE_API_POST}/exam-type/${
+              `${import.meta.env.VITE_API_EXAM}/exam-type/${
                 selectedExtTypeId.value
               }`
             );
@@ -488,28 +519,28 @@ export default {
       }
     };
 
-    const openDetailsPopup = (results) => {
-      selectedPost.value = results;
+    const openDetailsPopup = (exam) => {
+      selectedExam.value = exam;
       ShowPopup.value = true;
     };
 
     return {
-      resultss,
+      exams,
       searchText,
       ShowPopup,
       AddPopup,
       EditPopup,
-      PostToEdit,
-      selectedPost,
+      ExamToEdit,
+      selectedExam,
       selectedExtTypeId,
       positions, // Add positions here
-      fetchPosts,
+      fetchExams,
       togglePopup,
       openEditModal,
       handleClose,
       deletef,
-      deletePost,
-      searchPostById,
+      deleteExam,
+      searchExamById,
       openDetailsPopup,
       fetchPositionById, // Add fetchPositionById here
     };
